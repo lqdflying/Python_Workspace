@@ -1,0 +1,28 @@
+<collection shelf="New Arrivals">
+<movie dream="good good study" name="change for all" title="liuqd_change--attrib--">
+   <type>War, Thriller</type>
+   <format>DVD</format>
+   <format>rmvb</format>
+   <format>avi</format>
+   <year>2016</year>
+   <rating>PG</rating>
+   <stars>10</stars>
+   <description>Talk about a US-Japan war</description>
+</movie>
+<movie name="liuqd_change" title="liuqd_change--attrib--">
+   <type>Anime, Action</type>
+   <format>DVD</format>
+   <episodes>4</episodes>
+   <year>2014</year>
+   <rating>PG</rating>
+   <stars>10</stars>
+   <description>Vash the Stampede!</description>
+</movie>
+<sound title="Ishtar">
+   <type>Comedy</type>
+   <format>VHS</format>
+   <rating>PG</rating>
+   <stars>2</stars>
+   <description>Viewable boredom</description>
+</sound>
+</collection>
