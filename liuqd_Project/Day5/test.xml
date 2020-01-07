@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<namelist>
+	<name enrolled="yes">
+		liuqd
+		<age checked="no" />
+		<sex>33</sex>
+	</name>
+	<name enrolled="no">
+		mmkli
+		<age>19</age>
+	</name>
+</namelist>
