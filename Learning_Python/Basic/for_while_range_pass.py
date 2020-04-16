@@ -4,7 +4,7 @@ Created on 2017年8月17日
 
 @author: anddy.liu
 '''
-'''
+
 count = 0
 while count < 5:
     print (count, " 小于 5")
@@ -31,9 +31,6 @@ names = ["LiuQuandong","LiuMing",["name1","name2"],"WuHongwei"]
 for i in range(names.__len__()):
     print(i,names[i])
 
-'''
-while True:
-    pass
 
 
 

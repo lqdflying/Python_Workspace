@@ -20,16 +20,18 @@ def my_max4(a,b,c,d):
 def my_max(x,y):
     res=x if x >y else y
     return res
-    print(my_max(10,100))
+    print("return才是函数的返回值,这里不会输出,除非直接调用")
+print("嵌套函数".center(30,"+"))
+print(my_max(3,4))
 print(my_max4(1,20,3,4))
-
+my_max(100,99)
 #递归函数
 def calc(n):
     print(n)
     if int(n/2) > 0:
         return calc(n/2)
     print("->",n)
-    
+print("递归函数".center(30,"+"))    
 calc(10)  #这样写就不会出现死循环了，因为上边加了条件
 
 
@@ -37,6 +39,7 @@ calc(10)  #这样写就不会出现死循环了，因为上边加了条件
 # 可写函数说明
 getsum = lambda arg1, arg2: arg1 + arg2;
 # 调用sum函数
+print("匿名函数".center(30,"+"))    
 print ("相加后的值为 : ", getsum( 10, 20 ))
 print ("相加后的值为 : ", getsum( 20, 20 ))
 
@@ -52,4 +55,5 @@ def add(x,y,f):
     return f(x) + f(y)
 
 res = add(3,-6,abs) #abs是内建函数，就是求绝对值
+print("高阶函数".center(30,"+"))    
 print(res)

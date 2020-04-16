@@ -4,8 +4,8 @@ Created on 2017年10月23日
 
 @author: anddy.liu
 '''
-from collections import Iterable
-from collections import Iterator
+from collections.abc import Iterable
+from collections.abc import Iterator
 #查看字符串是否是迭代器或可迭代对象
 var_string="name"
 print(var_string,isinstance(var_string,Iterable)) #是可迭代对象
