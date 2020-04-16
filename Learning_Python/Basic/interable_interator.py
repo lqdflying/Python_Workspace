@@ -10,6 +10,7 @@ from collections.abc import Iterator
 var_string="name"
 print(var_string,isinstance(var_string,Iterable)) #是可迭代对象
 print(var_string,isinstance(var_string,Iterator)) #不是迭代器对象
+print(dir(var_string))
 #查看数字是否是迭代器或可迭代对象
 var_num=123
 print(var_num,isinstance(var_num,Iterable)) #不是是可迭代对象

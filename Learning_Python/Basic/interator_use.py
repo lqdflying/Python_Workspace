@@ -10,7 +10,7 @@ it1 = iter(newlist)    # 创建迭代器对象
 for x in it1:
     print (x, end="|")   #end:string appended after the last value, default a newline.
 print("\n")
-it2 = iter(newlist) 
+it2 = iter(newlist)
 while True:
     try:
         print(next(it2))
