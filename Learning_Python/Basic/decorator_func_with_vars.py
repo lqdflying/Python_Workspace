@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Friday April 17th 2020 10:48:52 pm
+# Last Modified: Friday April 17th 2020 11:36:48 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -21,7 +21,7 @@ def use_logging(func):
             print("这个function没有参数")
         else:
             print("这个function的参数是",args)
-        return func(*args)
+        return func(*args, **kwargs)
     return wrapper
 
 @use_logging
