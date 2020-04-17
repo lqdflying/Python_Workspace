@@ -7,11 +7,11 @@ Created on 2017年7月13日
 user,pwd = "liuqd","abc123"
 
 def auth(auth_type):#1
-    print("第一层参数:",auth_type) 
+    print("第一层参数:装饰器参数",auth_type) 
     def outer(func): #2
-        print("第二层参数:",func) 
+        print("第二层参数:被装饰函数的地址 ",func) 
         def wrapper(*args,**kwargs): #3
-            print("第三层参数:",*args,**kwargs) 
+            print("第三层参数:被装饰的函数的参数的地址",*args,**kwargs) 
             if auth_type == "local": #4
                 username = input("enter your name:").strip()
                 passwd = input("enter your passwd:").strip()
@@ -27,15 +27,15 @@ def auth(auth_type):#1
         return wrapper  #6
     return outer #7
 @auth(auth_type="remote")
-def index():
-    print("welcome to index page:这句话不会被打印")
+def index(var1):
+    print("welcome to index page:这句话不会被打印",var1)
 @auth(auth_type = "local")  #8
 #home重新解析为：function: <function auth.<locals>.outer.<locals>.wrapper at 0x00000000037411E0>
-def home():
-    print("local方式认证——看到这一句，就是被装饰的函数自己真正的代码开始执行了")
+def home(var2):
+    print("local方式认证——看到这一句，就是被装饰的函数自己真正的代码开始执行了",var2)
     return("这里需要打印一些东西")
 
 print("remote方式的认证".center(40,"+"))
-index()
+index(1)
 print("local方式的认证".center(40,"+"))
-home()
+home(2)
