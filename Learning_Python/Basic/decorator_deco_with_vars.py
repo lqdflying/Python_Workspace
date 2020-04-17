@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Friday April 17th 2020 11:12:22 pm
+# Last Modified: Friday April 17th 2020 11:21:31 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -14,12 +14,6 @@
 # Date      	 By	Comments
 # ----------	---	----------------------------------------------------------
 ###
-# -*- coding: utf-8 -*-
-'''
-Created on 2017年7月13日
-
-@author: anddy.liu
-'''
 user,pwd = "liu","123"
 
 def auth(auth_type):#1
