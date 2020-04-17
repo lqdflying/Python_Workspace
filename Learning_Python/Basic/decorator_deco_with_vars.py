@@ -1,10 +1,26 @@
+# -*- coding:utf-8 -*-
+###
+# File: decorator_deco_with_vars.py
+# Created Date: 2020-04-17
+# Author: anddy.liu
+# Contact: <lqdflying@gmail.com>
+# 
+# Last Modified: Friday April 17th 2020 11:12:22 pm
+# 
+# Copyright (c) 2020 personal
+# <<licensetext>>
+# -----
+# HISTORY:
+# Date      	 By	Comments
+# ----------	---	----------------------------------------------------------
+###
 # -*- coding: utf-8 -*-
 '''
 Created on 2017年7月13日
 
 @author: anddy.liu
 '''
-user,pwd = "liuqd","abc123"
+user,pwd = "liu","123"
 
 def auth(auth_type):#1
     print("第一层参数:装饰器参数",auth_type) 
@@ -19,23 +35,24 @@ def auth(auth_type):#1
                     print("输入正确")
                     return func(*args,**kwargs)#5
                 else:
-                    print("认证失败")
+                    print("认证失败,不触发return")
 #                     return func(*args,**kwargs) #这句不该有，因为认证失败，就不该return被装饰函数去执行
             elif auth_type == "remote": 
-                print("真实情况下，这里会调用remove认证的函数")
-            print("看下仅仅是把if跳过还是跳过其他")#结果证明， return func(*args,**kwargs)仅仅是把if跳过，返回到wrapper里边去
+                print("真实情况下，这里会调用remove认证的函数,这里先假设远程认证成功,触发return")
+                return func(*args,**kwargs)
+            print("这句永远不会执行,除非前边的if条件判断没有触发return")
         return wrapper  #6
     return outer #7
 @auth(auth_type="remote")
-def index(var1):
-    print("welcome to index page:这句话不会被打印",var1)
+def index():
+    print("welcome to index page:这句话不会被打印,除非远程认证通过")
 @auth(auth_type = "local")  #8
 #home重新解析为：function: <function auth.<locals>.outer.<locals>.wrapper at 0x00000000037411E0>
-def home(var2):
-    print("local方式认证——看到这一句，就是被装饰的函数自己真正的代码开始执行了",var2)
+def home():
+    print("local方式认证——看到这一句，就是被装饰的函数自己真正的代码开始执行了")
     return("这里需要打印一些东西")
 
 print("remote方式的认证".center(40,"+"))
-index(1)
+index()
 print("local方式的认证".center(40,"+"))
-home(2)
+home()
