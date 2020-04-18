@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Saturday April 18th 2020 4:43:43 pm
+# Last Modified: Saturday April 18th 2020 5:11:45 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -15,6 +15,7 @@
 # ----------	---	----------------------------------------------------------
 ###
 import os
+#currentdir = os.path.abspath('.') #这种用法也正确
 currentdir = os.path.dirname(__file__)
 print("以a+方式打开文件并且想输出的话,必须使用seek(0)让指针回到文件句柄开始,否则不报错但也无输出")
 with open("%s/liuqdarticle.txt"%currentdir,"a+",encoding = "utf-8") as liuqdfile: 
