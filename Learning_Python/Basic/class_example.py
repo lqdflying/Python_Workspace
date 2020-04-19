@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Sunday April 19th 2020 7:29:54 pm
+# Last Modified: Sunday April 19th 2020 10:25:05 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -17,16 +17,22 @@
 
 class MyClass:
    """一个简单的类实例"""
-   i = 12345
+   i = "不变的独立类属性" #这就是一个独立类属性
+   def __init__(self,name):
+      self.name = name #定义一个实例属性
    def f(self):
-       return 'hello world'
-# 实例化类
-x = MyClass()
+       return 'hello world:%s'%self.name
+# 实例化类,生成两个实例对象
+x = MyClass("liu")
+y = MyClass("anddy")
 #we created an object by adding parentheses to the name of the class. We then assigned that new instance to the variable cool_instancefor safe-keeping.
 #类名MyClass后边加括号是真实的在内存中实例化一个类的操作,赋值给前边的x变量是为了safe-keeping(保证后边可以引用这个实例化类)
 # 访问类的属性和方法
-print("MyClass 类的属性 i 为：", x.i)
-print("MyClass 类的方法 f 输出为：", x.f())
+print("实例对象x的类的属性 i 为：", x.i)
+print("实例对象y的类的属性 i 为：", y.i)
+print("获取类MyClass的类属性的正确方法：", MyClass.i)
+print("实例对象x的的方法 f 输出为：", x.f())
+print("实例对象y的的方法 f 输出为：", y.f())
 
 class Complex:
     def __init__(self, realpart, imagpart):
