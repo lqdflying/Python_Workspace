@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Monday April 20th 2020 11:10:30 pm
+# Last Modified: Tuesday April 21st 2020 1:51:49 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -41,7 +41,7 @@ p.name = "quan" #修改实例属性,看看调用方法会
 print("实例属性修改后:".center(30,'+'))
 p.func()
 print("p这个实例所有可用的属性和方法可以使用dir找出:\n",dir(p))
-
+People.total = 0
 # p1和p2是两个不同的对象，这两个对象各自的信息不共享,但是类变量是共享的并且可传递
 p1 = People('雷军',21,'小米大学')
 print (People.total) #类变量+1
@@ -66,8 +66,8 @@ p3 = People('张三',23,'清华')
 # 使用getattr(object,name,default)函数,会把获取到的属性值返回
 # object 要获取属性的对象 name 要获取的属性名  default  当属性不存在，赋一个默认值
 # 如果属性不存在，可以给一个默认值，不会让程序出现异常
-age = getattr(p3,'age',30)
-print (age)
+age = getattr(p3,'just',"go")
+print ("不会报错,因为使用getattr为不存在的属性赋值了默认值:\n",age)
 # hasattr(object,name) 判断某个对象是否拥有某个属性
 # 判断会返回结果，如果有这个属性返回Ture，没有返回False
 s = hasattr(p3,'age')
