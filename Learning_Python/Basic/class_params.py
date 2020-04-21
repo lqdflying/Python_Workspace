@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Tuesday April 21st 2020 1:51:49 pm
+# Last Modified: Tuesday April 21st 2020 4:12:01 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -18,6 +18,7 @@ class People(object):
     # 类变量可以由所有的对象访问，但是对象只能访问，不可修改
     # 用来做资源共享
     total = 0 #这里就是定义了一个类变量
+    __in = "in params"
     # 初始化函数，添加对象属性
     def __init__(self,name,age,school):
         # 给对象属性赋值
@@ -28,6 +29,8 @@ class People(object):
         People.total += 1
     def func(self):
         print("打印实例属性: ", self.name)
+    def get_private(self):
+        return "私有属性:%s"%self.__in
 p = People('liu',33,'USA') #实例化一个类
 print("打印实例属性: ",p.name)
 print("打印类属性: ",p.total)
@@ -77,3 +80,6 @@ if hasattr(p3,'ssss'):
     s = p3.ssss
 else:
     print ('p3没有ssss这个属性')
+
+print("正确的调用私有属性:", p3.get_private())
+print("错误的调用私有属性:", p3.__in)
