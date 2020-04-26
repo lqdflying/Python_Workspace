@@ -1,3 +1,3 @@
 import sys
-print("__init__")
+print("执行了__init__.py")
 print(sys.path)
