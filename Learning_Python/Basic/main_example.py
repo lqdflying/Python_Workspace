@@ -1,11 +1,11 @@
 # -*- coding:utf-8 -*-
 ###
-# File: main_test.py
+# File: main_example.py
 # Created Date: 2020-04-26
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Sunday April 26th 2020 3:10:15 pm
+# Last Modified: Monday April 27th 2020 10:54:09 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -14,6 +14,7 @@
 # Date      	 By	Comments
 # ----------	---	----------------------------------------------------------
 ###
+foo = 0
 def my_max4(a,b,c,d):
     res1=my_max(a,b)
     res2=my_max(res1,c)
@@ -22,6 +23,9 @@ def my_max4(a,b,c,d):
 def my_max(x,y):
     res=x if x >y else y
     return res
+
+def show():
+    print(foo)
 
 '''
 Code snippet for a `if __name__ == "__main__": ...` block (Python)
