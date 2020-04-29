@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Monday April 27th 2020 11:05:54 pm
+# Last Modified: Wednesday April 29th 2020 11:25:22 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -14,3 +14,5 @@
 # Date      	 By	Comments
 # ----------	---	----------------------------------------------------------
 ###
+def fun1():
+    print("fun1")
