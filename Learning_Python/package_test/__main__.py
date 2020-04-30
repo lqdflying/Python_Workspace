@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Thursday April 30th 2020 3:55:22 pm
+# Last Modified: Thursday April 30th 2020 3:58:35 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -30,7 +30,7 @@ print('__main__.py的__package__变量 :', __package__)
 # print(os.path.dirname(__file__))
 # print(os.pardir)
 
-if not __package__:
+if not __package__: #如果__pachage_)为空,那么证明执行方式是python <dir>,而没有加-m
     path = os.path.join(os.path.dirname(__file__), os.pardir)
     sys.path.insert(0, path)
 # print(path)
