@@ -1,0 +1,32 @@
+/*
+ * File: launch.json
+ * Created Date: 2020-05-02
+ * Author: anddy.liu
+ * Contact: <lqdflying@gmail.com>
+ * 
+ * Last Modified: Saturday May 2nd 2020 2:03:23 pm
+ * 
+ * Copyright (c) 2020 personal
+ * <<licensetext>>
+ * -----
+ * HISTORY:
+ * Date      	 By	Comments
+ * ----------	---	----------------------------------------------------------
+ */
+
+
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        }
+    ]
+}
