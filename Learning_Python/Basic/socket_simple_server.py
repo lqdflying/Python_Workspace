@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Sunday May 3rd 2020 7:25:20 pm
+# Last Modified: Sunday May 3rd 2020 7:30:57 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -20,7 +20,7 @@ server = socket.socket() #获得socket实例
 
 server.bind(("localhost",10999)) #绑定ip port
 server.listen()  #开始监听
-while True:
+while True:#第一层loop保证可以在某个client断开socket后,server不退出,一直等待新的连接
     print("等待客户端的连接...")
     conn,addr = server.accept() #接受并建立与客户端的连接,程序在此处开始阻塞,只到有客户端连接进来...
     print("新连接:",addr )
