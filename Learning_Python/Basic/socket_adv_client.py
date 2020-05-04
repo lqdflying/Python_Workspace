@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Sunday May 3rd 2020 10:49:04 pm
+# Last Modified: Monday May 4th 2020 8:56:52 am
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -16,7 +16,8 @@
 ###
 import socket
 import sys
-
+import  os
+currentdir = os.path.dirname(__file__)
 client = socket.socket()
 
 client.connect(("localhost",10111))
@@ -34,15 +35,14 @@ while True:
     client.send("准备好接收了,发吧loser".encode("utf-8"))
     received_size = 0 #已接收到的数据
     cmd_res = b''
-    f = open("test_copy.html","wb")#把接收到的结果存下来,一会看看收到的数据 对不对
-    while received_size != total_rece_size: #代表还没收完
-        data = client.recv(1024)
-        received_size += len(data) #为什么不是直接1024,还判断len干嘛,注意,实际收到的data有可能比1024少
-        cmd_res += data
-    else:
-        print("数据收完了",received_size)
-        #print(cmd_res.decode())
-        f.write(cmd_res) #把接收到的结果存下来,一会看看收到的数据 对不对
-    #print(data.decode()) #命令执行结果
-
+    with open("%s/test_copy.log"%currentdir,"wb") as f:#把接收到的结果存下来,一会看看收到的数据 对不对
+        while received_size != total_rece_size: #代表还没收完
+            data = client.recv(1024)
+            received_size += len(data) #为什么不是直接1024,还判断len干嘛,注意,实际收到的data有可能比1024少
+            cmd_res += data
+        else:
+            print("数据收完了",received_size)
+            #print(cmd_res.decode())
+            f.write(cmd_res) #把接收到的结果存下来,一会看看收到的数据 对不对
+        #print(data.decode()) #命令执行结果
 client.close()
