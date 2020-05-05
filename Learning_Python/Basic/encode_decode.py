@@ -5,14 +5,16 @@ Created on 2017年8月22日
 @author: anddy.liu
 '''
 a='我很好' ####python3 默认的编码为unicode
+print("默认字符串的类型:",type(a))
 ###unicode>gb2312
 unicode_gb2312=a.encode('gb2312') 
 ###因为默认是unicode所以不需要decode()，直接encode成想要转换的编码如gb2312
-print('我的gb2312',unicode_gb2312)
+print('我的gb2312编码后是:%s,它的类型是:%s'%(unicode_gb2312,type(unicode_gb2312)))
 ###gb2312>utf8
 gb2312_utf8=unicode_gb2312.decode('gb2312').encode('utf-8') 
 ##当前字符为gb2312所以要先decode成unicode(decode中传入的参数为当前字符的编码集)然后再encode成utf-8
 print('我是utf-8',gb2312_utf8) 
+print('我的gb2312编码后是:%s,它的类型是:%s'%(unicode_gb2312,type(unicode_gb2312)))
 ###utf8>gbk
 utf8_gbk=gb2312_utf8.decode('utf-8').encode('gbk')
 ##当前字符集编码为utf-8要想转换成gbk先decode成unicode字符集再encode成gbk字符集
