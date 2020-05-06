@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Wednesday May 6th 2020 4:47:42 pm
+# Last Modified: Wednesday May 6th 2020 4:56:45 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -43,7 +43,7 @@ while True:
     res_size = struct.unpack('I', res_size_raw)[0]
     total_rece_size = int(res_size)
     print("total size:",res_size)
-    client.send("准备好接收了,发吧loser".encode("utf-8")) #encode是讲str处理成bytes
+    #client.send("准备好接收了,发吧loser".encode("utf-8")) #encode是讲str处理成bytes
     received_size = 0 #已接收到的数据
     cmd_res = b''
     with open("%s/test_copy.log"%currentdir,"wb") as f:#把接收到的结果存下来,一会看看收到的数据 对不对

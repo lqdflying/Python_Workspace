@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Wednesday May 6th 2020 4:50:09 pm
+# Last Modified: Wednesday May 6th 2020 4:57:32 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -33,7 +33,8 @@ while True: #第一层loop
             break #这里断开就会再次回到第一次外层的loop
         print("收到命令:",data)
         #res = os.popen(data.decode("utf-8")).read() #py3 里socket发送的只有bytes,os.popen又只能接受str,所以要decode一下
-        res = subprocess.Popen(data,shell=True,stdout=subprocess.PIPE).stdout.read() #跟上面那条命令的效果是一样的
+        res = subprocess.Popen(data,shell=True,stdout=subprocess.PIPE).stdout.read() #跟上面那条命令的效果是一样的,返回的是bytes类型,可以直接进入socket传输
+        print("类型:",type(res))
         if len(res) == 0:
             res = "cmd exec success,has not output!".encode("utf-8")
         msg = struct.pack('I', len(res)) + res  
