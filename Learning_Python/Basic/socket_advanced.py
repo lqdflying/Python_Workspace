@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Monday May 4th 2020 8:20:48 am
+# Last Modified: Wednesday May 6th 2020 4:50:09 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -14,8 +14,7 @@
 # Date      	 By	Comments
 # ----------	---	----------------------------------------------------------
 ###
-import socket
-import os,subprocess
+import socket,os,subprocess,struct
 
 server = socket.socket() #获得socket实例
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) #配置端口复用
@@ -37,10 +36,6 @@ while True: #第一层loop
         res = subprocess.Popen(data,shell=True,stdout=subprocess.PIPE).stdout.read() #跟上面那条命令的效果是一样的
         if len(res) == 0:
             res = "cmd exec success,has not output!".encode("utf-8")
-        conn.send(str(len(res)).encode("utf-8")) #发送数据之前,先告诉客户端要发多少数据给它
-        print("等待客户ack应答...")
-        client_final_ack = conn.recv(1024) #等待客户端响应
-        print("客户应答:",client_final_ack.decode())
-        print(type(res))
-        conn.sendall(res) #发送端也有最大数据量限制,所以这里用sendall,相当于重复循环调用conn.send,直至数据发送完毕
+        msg = struct.pack('I', len(res)) + res  
+        conn.sendall(msg) #发送端也有最大数据量限制,所以这里用sendall,相当于重复循环调用conn.send,直至数据发送完毕
 server.close()
