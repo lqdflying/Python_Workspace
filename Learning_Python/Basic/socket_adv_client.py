@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Wednesday May 6th 2020 4:56:45 pm
+# Last Modified: Wednesday May 6th 2020 10:58:33 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -57,5 +57,6 @@ while True:
             print("数据收完了",received_size)
             #print(cmd_res.decode())
             f.write(cmd_res) #把接收到的结果存下来,一会看看收到的数据 对不对
-        print("结果",cmd_res) #命令执行结果
+        print("结果".center(20,"+")) #命令执行结果
+        print(cmd_res.decode())
 client.close()

@@ -1,6 +1,7 @@
-Learning_Python
-README.example.md
-README.md
-ansible_vmware
-liuqd_Project
-liuqdarticle.txt
+total 12K
+drwxrwxrwx 1 liuqd liuqd 512 Apr 27 23:00 Learning_Python
+-rwxrwxrwx 1 liuqd liuqd 12K Feb 18 22:18 README.example.md
+-rwxrwxrwx 1 liuqd liuqd  20 Jan  7 10:11 README.md
+drwxrwxrwx 1 liuqd liuqd 512 Apr 18 16:20 ansible_vmware
+drwxrwxrwx 1 liuqd liuqd 512 Jan  7 09:44 liuqd_Project
+-rwxrwxrwx 1 liuqd liuqd   0 Apr 18 16:45 liuqdarticle.txt
