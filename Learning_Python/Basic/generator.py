@@ -24,7 +24,7 @@ d = receivedata()
 d.__next__() #这里得执行一次，只有执行一次，receivedata才会变成生成器，并在该中断的地方中断，不然receivedata就是个函数
 while True:
     try:
-        d.send(2)
+        d.send(2) #生成器的send()就是用来传递参数给yield用的
     except StopIteration:
         print("程序结束")
         break

@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Sunday May 10th 2020 6:50:41 pm
+# Last Modified: Wednesday May 13th 2020 10:44:03 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -70,8 +70,28 @@ def main_daemon():
    m.join(timeout=3)
    # m.join()
    print("主线程停止".center(20,"="))
+num = 100  #设定一个共享变量
+mylock = threading.Lock() #生成全局锁
+def addNum():
+   global num #在每个线程中都获取这个全局变量
+   # print('--get num:',num ) #不知道为什么这个输出永远是100
+   time.sleep(1)
+   mylock.acquire() #修改数据前加锁
+   num -= 1 #对此公共变量进行-1操作
+   print("当前value:",num)
+   mylock.release() #修改后释放
+def main_lock():
+   thread_list = []
+   for i in range(10):
+      print("第%s次循环"%(i+1))
+      t = threading.Thread(target=addNum)
+      t.start()
+      thread_list.append(t)
+   for t in thread_list:#等待所有线程执行完毕
+      t.join()
 
 if __name__ == '__main__':
    # main_direct()
    # main_inherit()
-   main_daemon()
+   # main_daemon()
+   main_lock()
