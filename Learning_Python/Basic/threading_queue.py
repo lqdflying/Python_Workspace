@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Friday May 15th 2020 10:31:31 pm
+# Last Modified: Saturday May 16th 2020 10:23:14 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -42,10 +42,12 @@ def consumer(name):
             print("没有骨头了,%s共吃到%s根骨头"%(name,i))
             break
 
-
 makebone = threading.Thread(target=producer,)
 dog1 = threading.Thread(target=consumer, args=("qq",))
 dog2 = threading.Thread(target=consumer, args=("aa",))
+# 当前py文件运行的时候会同时生成3个线程,1个生产者线程,2个消费者线程,
+# 他们之间,生产者在先,全部完成生产后阻塞等待消费,
+# 两个消费者没有先后关系,因此需要使用"try-except"和"block=False"来防止最后的退出阻塞
 makebone.start()
 dog1.start()
 dog2.start()
