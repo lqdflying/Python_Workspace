@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Saturday May 16th 2020 10:20:45 pm
+# Last Modified: Saturday May 16th 2020 11:29:08 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -19,11 +19,13 @@ import queue,threading
 food = queue.Queue()
 def producer(name):
     count = 0
-    while count < 30:
+    while count < 20:
         time.sleep(random.randrange(3))
         food.put(count)  # 在队列里放包子
         print('工人 %s 生产了 %s 号包子并放在了盘子里.' % (name, count))
         count += 1
+'''
+#第1种消费者使用count来终止while循环
 def consumer(name):
     count = 0
     while count < 20:
@@ -35,6 +37,19 @@ def consumer(name):
         else:
             print("-----盘子里没有包子了----")
         count += 1
+'''
+def consumer(name):
+#第2种消费者使用try+except来终止循环
+    count = 0
+    while True:
+        time.sleep(random.randrange(4))
+        try:
+            data = food.get(timeout=6)  # 就继续获取包子
+            print('\033[32;1m顾客 %s 吃掉了盘子里编号为 %s 的包子...\033[0m' % (name, data))
+            count += 1
+        except queue.Empty:
+            print("盘子里没有包子了,顾客%s一共抢到了%s个包子"%(name, count))
+            break
 p1 = threading.Thread(target=producer, args=('Anddy',))
 c1 = threading.Thread(target=consumer, args=('Tom',))
 c2 = threading.Thread(target=consumer, args=('Jaccob',))
