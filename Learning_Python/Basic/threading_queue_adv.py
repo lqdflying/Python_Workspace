@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Sunday May 17th 2020 6:10:10 pm
+# Last Modified: Sunday May 17th 2020 8:10:28 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -45,7 +45,7 @@ def consumer(name):
     while True:
         time.sleep(random.randrange(4))
         try:
-            data = food.get(timeout=6)  # 就继续获取包子
+            data = food.get(timeout=7)  # 就继续获取包子
             print('\033[32;1m顾客 %s 吃掉了盘子里编号为 %s 的包子...\033[0m' % (name, data))
             count += 1
         except queue.Empty:
