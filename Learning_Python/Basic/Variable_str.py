@@ -1,9 +1,20 @@
-# -*- coding: utf-8 -*-
-'''
-Created on 2017年8月10日
+# -*- coding:utf-8 -*-
+###
+# File: Variable_str.py
+# Created Date: 2017-08-10
+# Author: anddy.liu
+# Contact: <lqdflying@gmail.com>
+# 
+# Last Modified: Sunday May 17th 2020 8:47:34 pm
+# 
+# Copyright (c) 2020 personal
+# <<licensetext>>
+# -----
+# HISTORY:
+# Date      	 By	Comments
+# ----------	---	----------------------------------------------------------
+###
 
-@author: anddy.liu
-'''
 name = "liuqd"
 other = "liuming" #变零也支持单引号创建，单引号和双引号是一致的
 print(name)
