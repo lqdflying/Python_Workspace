@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Monday May 18th 2020 4:25:37 pm
+# Last Modified: Wednesday May 20th 2020 3:28:29 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -14,7 +14,7 @@
 # Date      	 By	Comments
 # ----------	---	----------------------------------------------------------
 ###
-from multiprocessing import Queue, Process
+from multiprocessing import Process
 import time,os
 def test():
     time.sleep(2)
@@ -24,10 +24,10 @@ class MyProcess(Process):
 
     def run(self):
         time.sleep(2)
-        print('this is process {}'.format(os.getpid()))
-
+        print('子进程ID: {}'.format(os.getpid()))
+        print('初始化函数:当前模块名字为%s,进程ID为:'%__name__, os.getpid())
     def __del__(self):
-        print('del the process {}'.format(os.getpid()))
+        print('执行__del__的进程ID: {}'.format(os.getpid()))
 
 def main_simple():
     p = Process(target=test)
@@ -36,10 +36,11 @@ def main_simple():
     print('the process is ended')
 
 def main_inherit():
+    print('主进程的PID: {}'.format(os.getpid()))
     p = MyProcess()
     p.start()
     p.join()
-    print('ths process is ended')
+    print('主进程停止')
 
 if __name__ == '__main__':
     # main_simple()
