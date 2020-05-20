@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Wednesday May 20th 2020 3:28:29 pm
+# Last Modified: Wednesday May 20th 2020 5:37:48 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -15,7 +15,7 @@
 # ----------	---	----------------------------------------------------------
 ###
 from multiprocessing import Process
-import time,os
+import time,os,random
 def test():
     time.sleep(2)
     print('进程ID是: {}'.format(os.getpid()))
@@ -42,7 +42,24 @@ def main_inherit():
     p.join()
     print('主进程停止')
 
+def run_proc(name):
+    print('子进程 {0} {1} 启动 '.format(name, os.getpid()))
+    time.sleep(random.randrange(5))
+    print('{}号子进程停止'.format(name))
+
+def main_current():
+    print('父进程 {0} 启动'.format(os.getpid()))
+    process_list = []
+    for i in range(5):
+        p = Process(target=run_proc, args=(str(i),))
+        # print('process start')
+        p.start()
+        process_list.append(p)
+    for i in process_list: i.join()
+    print('父进程退出')
+
 if __name__ == '__main__':
     # main_simple()
-    main_inherit()
+    # main_inherit()
+    main_current()
 
