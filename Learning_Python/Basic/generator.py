@@ -12,9 +12,12 @@ var = gensquares(5)
 print(next(var))
 print(next(var))
 print(next(var))
+
 print("第二种打印方式".center(30,"+"))
 for item in gensquares(5):
     print(item)
+
+
 print("下边证明，yield不仅能return值，还能receive从外边传过来的值".center(30,"+"))
 def receivedata():
     c = yield
@@ -28,3 +31,31 @@ while True:
     except StopIteration:
         print("程序结束")
         break
+
+print("send()和__next__的区别".center(20,"+"))
+
+
+def test():
+    print("generator start")
+    n = 1
+    while True:
+        
+        yield_expression_value = yield n
+        print("yield_expression_value = %s" %(yield_expression_value))
+        
+        # yield n
+        n += 1
+
+
+#创建generator对象
+generator = test()
+# print(type(generator))
+
+#启动generator
+print("生成器调用__next__()返回的是yield声明的变量的值: %d" %generator.__next__())
+
+#发送值给yield表达式
+#这一句执行后,test()函数里的print语句就会执行
+print("第二次调用__next__()之前,会执行一次test函数里的print语句,当然__next__()永远只会返回yield的值: %d" %generator.__next__())
+
+print("使用send()后,不必须需要使用__next__,生成器会自动返回下一个yield的值: %d" %generator.send(66))
