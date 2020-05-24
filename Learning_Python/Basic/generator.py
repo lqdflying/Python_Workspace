@@ -59,3 +59,4 @@ print("生成器调用__next__()返回的是yield声明的变量的值: %d" %gen
 print("第二次调用__next__()之前,会执行一次test函数里的print语句,当然__next__()永远只会返回yield的值: %d" %generator.__next__())
 
 print("使用send()后,不必须需要使用__next__,生成器会自动返回下一个yield的值: %d" %generator.send(66))
+
