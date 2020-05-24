@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Sunday May 24th 2020 10:09:28 pm
+# Last Modified: Sunday May 24th 2020 10:12:52 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -15,6 +15,7 @@
 # ----------	---	----------------------------------------------------------
 ###
 
+#yield和yield from 是不一样的
 def coroutine_example(name):
     print('start coroutine...name:', name)
 
