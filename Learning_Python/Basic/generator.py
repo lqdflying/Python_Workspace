@@ -52,13 +52,16 @@ generator = test()
 # print(type(generator))
 
 #启动generator
-# print("生成器初始化:调用__next__()返回的是yield声明的变量的初始值: %d" %generator.__next__())
+# print("生成器调用__next__()返回的是yield声明的变量的值: %d" %generator.__next__())
 print("生成器初始化:调用send(None)返回的是yield声明的变量的初始值: %d" %generator.send(None))
-#这里如果想用send()的方式初始化,则只能send(None),否则报错
+# 这里如果想用send()的方式初始化,则只能send(None),否则报错
 # can't send non-None value to a just-started generator
-#发送值给yield表达式
-#这一句执行后,test()函数里的print语句就会执行
+
 print("第二次调用__next__()之前,会执行一次test函数里的print语句,当然__next__()永远只会返回yield的值: %d" %generator.__next__())
+#发送值给yield表达式,虽然是发送了个None
+#这一句执行后,test()函数里的print语句就会执行
 
 print("使用send()后,不必须需要使用__next__,生成器会自动返回下一个yield的值: %d" %generator.send(66))
+#发送值给yield表达式,发送的是66
+#这一句执行后,test()函数里的print语句就会执行
 
