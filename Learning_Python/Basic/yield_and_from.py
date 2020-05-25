@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Sunday May 24th 2020 10:12:52 pm
+# Last Modified: Monday May 25th 2020 11:11:16 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -35,3 +35,34 @@ try:
     coro.send(None)
 except StopIteration as e:
     print('try-except返回值[\n\t{}\n]'.format(e.value))
+
+def fab(max):
+     n,a,b = 0,0,1
+     while n < max:
+          yield b
+          # print b
+          a, b = b, a + b
+          n = n + 1
+f=fab(5)
+'''
+f.__next__()
+print(f.__next__()) #1
+print(f.__next__()) #2
+print(f.__next__()) #3
+print(f.__next__()) #5
+# print(f.__next__()) #StopIteration
+'''
+for i in f:
+    print(i) #针对生成器使用for调用也能自动的处理StopIteration异常
+
+'''
+def f_wrapper(fun_iterable):
+    print('start')
+    for item  in fun_iterable:
+        yield item
+    print('end')
+
+wrap = f_wrapper(fab(5))
+for i in wrap:
+    print(i,end=',')
+'''
