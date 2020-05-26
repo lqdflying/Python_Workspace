@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Saturday May 23rd 2020 10:49:51 pm
+# Last Modified: Tuesday May 26th 2020 10:44:07 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -27,7 +27,7 @@ async def result(name):
     for i in range(5):
         result = await iodemo(i)
         print("[%s]: 处理后的值是%s" %(name,result) )
-    return ("处理完了")
+    return f"{name}的任务处理完了"
 
 def get_result(corou):
     print("回调Calback:", corou.result())
@@ -60,6 +60,14 @@ task = [
     asyncio.ensure_future(dong)
 ]
 
-loop.run_until_complete(asyncio.wait(task))
+for i in task: i.add_done_callback(get_result)
+
+loop.run_until_complete(asyncio.wait(task)) #获取多任务返回值方法一
+
+'''
+#获取多任务返回值方法二
+for i in task:
+    print(i.result())
 print("end")
+'''
 loop.close()
