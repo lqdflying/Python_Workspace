@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Tuesday May 26th 2020 3:05:37 pm
+# Last Modified: Tuesday May 26th 2020 3:39:47 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -30,14 +30,19 @@ def coroutine_from(father):
     return f"coroutine_from()的返回值[\n\t{result}\n\t]"
 
 def coroutine_while(father):
+    print('coroutine_while: start')
     while True:
         result = yield from coroutine_example(father)
+        print('coroutine_while: end')
         return f"coroutine_while()的返回值[\n\t{result}\n\t]"
 
 def coroutine_again(father):
+    print('coroutine_again: start')
     while True:
         result = yield from coroutine_while(father)
+        print('coroutine_again: end')
         return f"coroutine_again()的返回值--->{result}<---"
+    
 
 print("直接调用子生成器".center(30,"+"))
 
@@ -59,11 +64,13 @@ coro_for.send(None)
 print("for循环调用二级委派生成器".center(30,"+"))
 coro_again = coroutine_again('second')
 coro_again.send(None)
-for i in ['1', None]:
+
+for i in [2 ,3, 4, 5, None]:
     try:
         print(coro_again.send(i)) #send(None)会触发异常
     except StopIteration as a:
         print(a.value)
+
     
 
 
@@ -91,10 +98,12 @@ print(f.__next__()) #3
 print(f.__next__()) #5
 # print(f.__next__()) #StopIteration
 '''
-for i in f:
-    print(i) #针对生成器使用for调用也能自动的处理StopIteration异常
 
 '''
+for i in f:
+    print(i) #针对生成器使用for调用也能自动的处理StopIteration异常
+'''
+
 def f_wrapper(fun_iterable):
     print('start')
     for item  in fun_iterable:
@@ -104,4 +113,11 @@ def f_wrapper(fun_iterable):
 wrap = f_wrapper(fab(5))
 for i in wrap:
     print(i,end=',')
-'''
+
+def f_wrapper2(fun_iterable):
+    print('start')
+    yield from fun_iterable  #注意此处必须是一个可生成对象
+    print('end')
+wrap = f_wrapper2(fab(5))
+for i in wrap:
+    print(i,end=',')
