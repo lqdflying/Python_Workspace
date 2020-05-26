@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Monday May 25th 2020 11:11:16 pm
+# Last Modified: Tuesday May 26th 2020 3:05:37 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -29,8 +29,47 @@ def coroutine_from(father):
     result = yield from coroutine_example(father)
     return f"coroutine_from()的返回值[\n\t{result}\n\t]"
 
+def coroutine_while(father):
+    while True:
+        result = yield from coroutine_example(father)
+        return f"coroutine_while()的返回值[\n\t{result}\n\t]"
+
+def coroutine_again(father):
+    while True:
+        result = yield from coroutine_while(father)
+        return f"coroutine_again()的返回值--->{result}<---"
+
+print("直接调用子生成器".center(30,"+"))
+
+coro_child = coroutine_example('quan')
+coro_child.send(None)
+# coro_child.send(None) #第二次send(None)会触发异常
+
+print("直接调用委派生成器".center(30,"+"))
+coro_while = coroutine_while('dong')
+coro_while.send(None)
+# coro_while.send(None) #第二次send(None)会触发异常
+
+print("for循环调用委派生成器".center(30,"+"))
+coro_for = coroutine_while('dong')
+coro_for.send(None)
+# for i in ['1', None]:
+#     print(coro_for.send(i)) #send(None)会触发异常
+
+print("for循环调用二级委派生成器".center(30,"+"))
+coro_again = coroutine_again('second')
+coro_again.send(None)
+for i in ['1', None]:
+    try:
+        print(coro_again.send(i)) #send(None)会触发异常
+    except StopIteration as a:
+        print(a.value)
+    
+
+
+print("try-except调用委派生成器".center(30,"+"))
 coro = coroutine_from('liu')
-coro.__next__()
+coro.send(None)
 try:
     coro.send(None)
 except StopIteration as e:
