@@ -19,8 +19,9 @@ def my_max4(a,b,c,d):
     return res3
 def my_max(x,y):
     res=x if x >y else y
-    return res
     print("return才是函数的返回值,这里不会输出,除非直接调用")
+    return res
+    
 print("嵌套函数".center(30,"+"))
 print(my_max(3,4))
 print(my_max4(1,20,3,4))
@@ -37,7 +38,7 @@ calc(10)  #这样写就不会出现死循环了，因为上边加了条件
 
 #匿名函数
 # 可写函数说明
-getsum = lambda arg1, arg2: arg1 + arg2;
+getsum = lambda arg1, arg2: arg1 + arg2
 # 调用sum函数
 print("匿名函数".center(30,"+"))    
 print ("相加后的值为 : ", getsum( 10, 20 ))
