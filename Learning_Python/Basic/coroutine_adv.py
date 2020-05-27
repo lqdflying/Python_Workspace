@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Wednesday May 27th 2020 5:12:23 pm
+# Last Modified: Wednesday May 27th 2020 8:20:45 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -15,7 +15,8 @@
 # ----------	---	----------------------------------------------------------
 ###
 # python协程只能运行在事件循环中，但是一旦事件循环运行，又会阻塞当前任务。所以只能在当前进程中再开一个线程，这个线程的主要任务是运行事件循环，
-# 就是event_loop,因为他是一个无限循环，会阻塞当前线程。放一个自己写的demo，注释写的很详细。另外还有一点需要注意，一个事件循环中不能运行另外一个事件循环。
+# 就是event_loop,因为他是一个无限循环，会阻塞当前线程。放一个自己写的demo，注释写的很详细。
+# 另外还有一点需要注意，一个事件循环中不能运行另外一个事件循环。
 import asyncio
 from threading import Thread
   
