@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Wednesday May 27th 2020 11:06:22 am
+# Last Modified: Wednesday May 27th 2020 5:12:23 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -19,7 +19,11 @@
 import asyncio
 from threading import Thread
   
-  
+async def consumption(i):
+    while True:
+        print("我是第{}任务".format(i))
+        await asyncio.sleep(1)
+
 async def production_task():
     i = 0
     while True:
@@ -27,12 +31,6 @@ async def production_task():
         asyncio.run_coroutine_threadsafe(consumption(i), thread_loop)  # 注意：run_coroutine_threadsafe 这个方法只能用在运行在线程中的循环事件使用
         await asyncio.sleep(1)  # 必须加await
         i += 1
-  
-  
-async def consumption(i):
-    while True:
-        print("我是第{}任务".format(i))
-        await asyncio.sleep(1)
   
   
 def start_loop(loop):
