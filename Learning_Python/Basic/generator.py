@@ -1,9 +1,20 @@
-# -*- coding: utf-8 -*-
-'''
-Created on 2017年11月1日
+# -*- coding:utf-8 -*-
+###
+# File: generator.py
+# Created Date: 2020-05-27
+# Author: anddy.liu
+# Contact: <lqdflying@gmail.com>
+# 
+# Last Modified: Wednesday May 27th 2020 9:07:01 pm
+# 
+# Copyright (c) 2020 personal
+# <<licensetext>>
+# -----
+# HISTORY:
+# Date      	 By	Comments
+# ----------	---	----------------------------------------------------------
+###
 
-@author: anddy.liu
-'''
 def gensquares(N):
     for i in range(N):
         yield i ** 2 #函数里使用yield就变成了生成器
@@ -32,8 +43,7 @@ while True:
         print("程序结束")
         break
 
-print("send()和__next__的区别".center(20,"+"))
-
+print("send()和__next__的区别".center(30,"+"))
 
 def test():
     print("generator start")
