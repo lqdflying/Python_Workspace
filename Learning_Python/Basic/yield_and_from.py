@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Tuesday May 26th 2020 3:39:47 pm
+# Last Modified: Wednesday May 27th 2020 10:25:48 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -83,13 +83,16 @@ except StopIteration as e:
     print('try-except返回值[\n\t{}\n]'.format(e.value))
 
 def fab(max):
-     n,a,b = 0,0,1
-     while n < max:
-          yield b
-          # print b
-          a, b = b, a + b
-          n = n + 1
-f=fab(5)
+    n,a,b = 0,0,1
+    while n < max:
+        yield b
+        # print b
+        a, b = b, a + b
+        n = n + 1
+    return "fab task done!"
+    
+f = fab(5)
+g = fab(6)
 '''
 f.__next__()
 print(f.__next__()) #1
@@ -99,13 +102,20 @@ print(f.__next__()) #5
 # print(f.__next__()) #StopIteration
 '''
 
-'''
+print(type(f))
+print("处理异常方法一:不能catch最终生成器的返回值:")
 for i in f:
-    print(i) #针对生成器使用for调用也能自动的处理StopIteration异常
-'''
+    print(i,end=' ') #针对生成器使用for调用也能自动的处理StopIteration异常
+print("\n处理异常方法二:可以catch最终生成器的返回值:")
+while True:
+    try:
+        print(g.__next__(),end=' ')
+    except StopIteration as e:
+        print('\n',e.value)
+        break
 
 def f_wrapper(fun_iterable):
-    print('start')
+    print('\nstart')
     for item  in fun_iterable:
         yield item
     print('end')

@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Wednesday May 27th 2020 9:07:01 pm
+# Last Modified: Wednesday May 27th 2020 9:31:34 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -74,4 +74,3 @@ print("第二次调用__next__()之前,会执行一次test函数里的print语�
 print("使用send()后,不必须需要使用__next__,生成器会自动返回下一个yield的值: %d" %generator.send(66))
 #发送值给yield表达式,发送的是66
 #这一句执行后,test()函数里的print语句就会执行
-
