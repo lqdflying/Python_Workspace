@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Tuesday May 26th 2020 9:33:30 pm
+# Last Modified: Wednesday May 27th 2020 2:53:15 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -20,12 +20,31 @@ async def mygen(alist):
         c = random.randint(0, len(alist)-1)
         print(alist.pop(c))
         await asyncio.sleep(1)
-strlist = ["ss","dd","gg"]
-intlist=[1,2,5,6]
-c1=mygen(strlist)
-c2=mygen(intlist)
-print(c1)
+strlist1 = ["ss","dd","gg"]
+intlist1 = [1,2,5,6]
+strlist2 = ["ss","dd","gg"]
+intlist2 = [1,2,5,6]
+c1 = mygen(strlist1)
+c2 = mygen(intlist1)
+c3 = mygen(strlist2)
+c4 = mygen(intlist2)
+print("生成的是一个协程对象",c1)
 
+async def main():
+    #串行
+    await asyncio.create_task(c1)
+    await asyncio.create_task(c2)
+    #并行
+    await asyncio.gather(
+        c3,
+        c4
+    )
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
+'''
+# 老式用法?
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     tasks = [
@@ -35,3 +54,4 @@ if __name__ == '__main__':
     loop.run_until_complete(asyncio.wait(tasks))
     print('All fib finished')
     loop.close()
+'''

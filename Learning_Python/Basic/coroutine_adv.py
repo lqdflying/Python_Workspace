@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Tuesday May 26th 2020 11:04:21 pm
+# Last Modified: Wednesday May 27th 2020 11:06:22 am
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -24,8 +24,7 @@ async def production_task():
     i = 0
     while True:
         # 将consumption这个协程每秒注册一个到运行在线程中的循环，thread_loop每秒会获得一个一直打印i的无限循环任务
-        asyncio.run_coroutine_threadsafe(consumption(i),
-                                         thread_loop)  # 注意：run_coroutine_threadsafe 这个方法只能用在运行在线程中的循环事件使用
+        asyncio.run_coroutine_threadsafe(consumption(i), thread_loop)  # 注意：run_coroutine_threadsafe 这个方法只能用在运行在线程中的循环事件使用
         await asyncio.sleep(1)  # 必须加await
         i += 1
   
