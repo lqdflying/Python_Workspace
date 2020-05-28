@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Wednesday May 27th 2020 10:25:48 pm
+# Last Modified: Thursday May 28th 2020 9:49:26 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -114,20 +114,22 @@ while True:
         print('\n',e.value)
         break
 
-def f_wrapper(fun_iterable):
+def f_wrapper(n):
     print('\nstart')
-    for item  in fun_iterable:
+    for item  in fab(n):
         yield item
-    print('end')
+    print('\nend')
 
-wrap = f_wrapper(fab(5))
+wrap = f_wrapper(5)
 for i in wrap:
     print(i,end=',')
 
-def f_wrapper2(fun_iterable):
+def f_wrapper2(n):
     print('start')
-    yield from fun_iterable  #注意此处必须是一个可生成对象
-    print('end')
-wrap = f_wrapper2(fab(5))
+    last_result = yield from fab(n)  #注意此处必须是一个可生成对象
+    print('\n最后委派生成器return结束的返回值是:',last_result)
+    print('\nend')
+wrap = f_wrapper2(5)
+print("初始化委派生成器,而它返回的是子生成器的第一个值:",wrap.__next__())
 for i in wrap:
     print(i,end=',')
