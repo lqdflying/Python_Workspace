@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Saturday May 30th 2020 9:36:36 pm
+# Last Modified: Saturday May 30th 2020 9:44:25 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -33,7 +33,7 @@ async def main():
     print(f"返回task的名字at {time.strftime('%X')}: ",task.get_name())
     # Wait for 1 second
     await asyncio.sleep(5)
-
+    print(asyncio.all_tasks())
     task.cancel()
     try:
         await task
@@ -42,8 +42,8 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+    
 '''
-
 1. "await asyncio.sleep(5)"会让协程main()协程挂起,event loop会继续执行"await task",然后协程cancel_me()至少会被__next__()一次,也就是会走到"await asyncio.sleep(3600)"这里然后挂起(之前会print一个"before sleep")
 2. cancel_me()挂起后(这个挂起设置了3600秒,所以他铁得等),event loop转而寻找loop其他先"挂起结束"的协程,这里就是main()了,因为"await asyncio.sleep(5)"5秒后就会到期← 注意这里就有一个5秒的时间段
 3. 一瞬间,同一时间,event loop由于"task.cancel()"的存在,在处理完main()里的await后就转而抛出一个CancelledError异常给"cancel_me()"[a CancelledError exception to be thrown into the wrapped coroutine on the next cycle of the event loop],然后协程cancel_me()里的"await asyncio.sleep(3600)"就不会继续等待下去了
