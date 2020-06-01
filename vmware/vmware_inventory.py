@@ -1,15 +1,20 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# Copyright (C): 2017, Ansible Project
-# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# -*- coding:utf-8 -*-
+###
+# File: vmware_inventory.py
+# Created Date: 2020-03-27
+# Author: anddy.liu
+# Contact: <lqdflying@gmail.com>
+# 
+# Last Modified: Monday June 1st 2020 5:08:52 pm
+# 
+# Copyright (c) 2020 personal
+# <<licensetext>>
+# -----
+# HISTORY:
+# Date      	 By	Comments
+# ----------	---	----------------------------------------------------------
+###
 
-# Requirements
-#   - pyvmomi >= 6.0.0.2016.4
-
-# TODO:
-#   * more jq examples
-#   * optional folder hierarchy
 
 """
 $ jq '._meta.hostvars[].config' data.json | head
@@ -25,7 +30,7 @@ $ jq '._meta.hostvars[].config' data.json | head
   "firmware": "bios",
 """
 
-from __future__ import print_function
+from __future__ import print_function #旧版python引入p3中的print语法 
 
 import atexit
 import datetime
@@ -41,7 +46,9 @@ from time import time
 from jinja2 import Environment
 
 from ansible.module_utils.six import integer_types, PY3
-from ansible.module_utils.six.moves import configparser
+# from ansible.module_utils.six.moves import configparser
+# from ansible.module_utils.six import configparser
+import configparser
 
 try:
     import argparse
