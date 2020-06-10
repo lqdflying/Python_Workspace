@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Monday June 1st 2020 5:08:52 pm
+# Last Modified: Sunday June 7th 2020 11:44:04 am
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -239,7 +239,8 @@ class VMWareInventory(object):
             'lower_var_keys': True,
             'custom_field_group_prefix': 'vmware_tag_',
             'groupby_custom_field_excludes': '',
-            'groupby_custom_field': False}
+            'groupby_custom_field': False
+            }
         }
 
         if PY3:
