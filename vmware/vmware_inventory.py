@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Sunday June 7th 2020 11:44:04 am
+# Last Modified: Friday June 12th 2020 9:44:23 am
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -353,7 +353,7 @@ class VMWareInventory(object):
                   'port': int(self.port)}
 
         if self.validate_certs and hasattr(ssl, 'SSLContext'):
-            context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS)
             context.verify_mode = ssl.CERT_REQUIRED
             context.check_hostname = True
             kwargs['sslContext'] = context
@@ -361,10 +361,10 @@ class VMWareInventory(object):
             sys.exit('pyVim does not support changing verification mode with python < 2.7.9. Either update '
                      'python or use validate_certs=false.')
         elif not self.validate_certs and hasattr(ssl, 'SSLContext'):
-            context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS)
             context.verify_mode = ssl.CERT_NONE
             context.check_hostname = False
-            kwargs['sslContext'] = context
+            kwargs['sslContext'] = context #为kwargs这个dict附加了一个'sslContext'的key,value是按照参数要求设置好的SSL 上下文
         elif not self.validate_certs and not hasattr(ssl, 'SSLContext'):
             # Python 2.7.9 < or RHEL/CentOS 7.4 <
             pass
@@ -372,10 +372,17 @@ class VMWareInventory(object):
         return self._get_instances(kwargs)
 
     def _get_instances(self, inkwargs):
-        ''' Make API calls '''
+        ''' 
+        Make API calls
+        def SmartConnect(protocol='https', host='localhost', port=443, user='root', pwd='',
+                service="hostd", path="/sdk", connectionPoolTimeout=CONNECTION_POOL_IDLE_TIMEOUT_SEC,
+                preferredApiVersions=None, keyFile=None, certFile=None,
+                thumbprint=None, sslContext=None, b64token=None, mechanism='userpass'):
+            <...>
+        '''
         instances = []
         try:
-            si = SmartConnect(**inkwargs)
+            si = SmartConnect(**inkwargs) 
         except ssl.SSLError as connection_error:
             if '[SSL: CERTIFICATE_VERIFY_FAILED]' in str(connection_error) and self.validate_certs:
                 sys.exit("Unable to connect to ESXi server due to %s, "
