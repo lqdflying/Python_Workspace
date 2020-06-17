@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Wednesday June 17th 2020 11:17:52 am
+# Last Modified: Wednesday June 17th 2020 5:58:27 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -187,7 +187,11 @@ class genInventory(object):
         self.config = config
 
     def get_Section(self):
-        print(self.config.sections())
+        '''所有的配置信息'''
+        for i in self.config.sections():
+            print(self.config.items(i))
+        '''自定义属性信息'''
+        print(self.guest_props)
 
     def get_instances(self):
         ''' Get a list of vm instances with pyvmomi '''
@@ -214,6 +218,16 @@ class genInventory(object):
             pass
 
         return self._get_instances(kwargs)
+
+    def get_method(self,vobj):
+        methods = dir(vobj)
+        methods = [str(x) for x in methods if not x.startswith('_')]
+        methods = [x for x in methods if x not in self.bad_types]
+        methods = [x for x in methods if not x.lower() in self.skip_keys]
+        methods = sorted(methods)
+        return methods
+        # print("method:\n",methods) #all the method a vm object have
+
 
     def _get_instances(self, inkwargs):
         ''' 
@@ -254,14 +268,101 @@ class genInventory(object):
         cfm = content.customFieldsManager
         print('content.customFieldsManager:', cfm)
 
-        instance_tuples = []
+        print("vm对象可用方法集合:\n",self.get_method(instances[0]))
+
+        instance_dict = {}
         for instance in instances:
-            ifacts = self.facts_from_vobj(instance)
-            instance_tuples.append((instance, ifacts))
-        pprint.pprint(instance_tuples[0])
+            # ifacts = self.facts_from_vobj(instance)
+            ifacts = self.facts_from_proplist(instance)
+            instance_dict[instance] = ifacts
+        # print(type(instance_dict))
+        pprint.pprint(instance_dict)
+
+    def facts_from_proplist(self, vm):
+        '''Get specific properties instead of serializing everything'''
+
+        rdata = {}
+        for prop in self.guest_props:
+            self.debugl('getting %s property for %s' % (prop, vm.name))
+            key = prop
+            if self.lowerkeys:
+                key = key.lower()
+
+            if '.' not in prop:
+                # props without periods are direct attributes of the parent
+                vm_property = getattr(vm, prop)
+                if isinstance(vm_property, vim.CustomFieldsManager.Value.Array):
+                    temp_vm_property = []
+                    for vm_prop in vm_property:
+                        temp_vm_property.append({'key': vm_prop.key,
+                                                 'value': vm_prop.value})
+                    rdata[key] = temp_vm_property
+                else:
+                    rdata[key] = vm_property
+            else:
+                # props with periods are subkeys of parent attributes
+                parts = prop.split('.')
+                total = len(parts) - 1
+
+                # pointer to the current object
+                val = None
+                # pointer to the current result key
+                lastref = rdata
+
+                for idx, x in enumerate(parts):
+
+                    if isinstance(val, dict):
+                        if x in val:
+                            val = val.get(x)
+                        elif x.lower() in val:
+                            val = val.get(x.lower())
+                    else:
+                        # if the val wasn't set yet, get it from the parent
+                        if not val:
+                            try:
+                                val = getattr(vm, x)
+                            except AttributeError as e:
+                                self.debugl(e)
+                        else:
+                            # in a subkey, get the subprop from the previous attrib
+                            try:
+                                val = getattr(val, x)
+                            except AttributeError as e:
+                                self.debugl(e)
+
+                        # make sure it serializes
+                        val = self._process_object_types(val)
+
+                    # lowercase keys if requested
+                    if self.lowerkeys:
+                        x = x.lower()
+
+                    # change the pointer or set the final value
+                    if idx != total:
+                        if x not in lastref:
+                            lastref[x] = {}
+                        lastref = lastref[x]
+                    else:
+                        lastref[x] = val
+        # self.debugl("For %s" % vm.name)
+        # for key in list(rdata.keys()):
+        #     if isinstance(rdata[key], dict):
+        #         for ikey in list(rdata[key].keys()):
+        #             self.debugl("Property '%s.%s' has value '%s'" % (key, ikey, rdata[key][ikey]))
+        #     else:
+        #         self.debugl("Property '%s' has value '%s'" % (key, rdata[key]))
+        return rdata
 
     def facts_from_vobj(self, vobj, level=0):
         ''' Traverse a VM object and return a json compliant data structure '''
+
+        # pyvmomi objects are not yet serializable, but may be one day ...
+        # https://github.com/vmware/pyvmomi/issues/21
+
+        # WARNING:
+        # Accessing an object attribute will trigger a SOAP call to the remote.
+        # Increasing the attributes collected or the depth of recursion greatly
+        # increases runtime duration and potentially memory+network utilization.
         
         if level == 0:
             try:
@@ -427,3 +528,4 @@ class genInventory(object):
 if __name__ == "__main__":
     vcsa = genInventory()
     vcsa.get_instances()
+    # vcsa.get_Section()
