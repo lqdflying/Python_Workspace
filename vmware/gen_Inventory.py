@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Wednesday June 17th 2020 5:58:27 pm
+# Last Modified: Wednesday June 17th 2020 10:56:42 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -228,7 +228,6 @@ class genInventory(object):
         return methods
         # print("method:\n",methods) #all the method a vm object have
 
-
     def _get_instances(self, inkwargs):
         ''' 
         Make API calls
@@ -270,13 +269,20 @@ class genInventory(object):
 
         print("vm对象可用方法集合:\n",self.get_method(instances[0]))
 
-        instance_dict = {}
-        for instance in instances:
-            # ifacts = self.facts_from_vobj(instance)
-            ifacts = self.facts_from_proplist(instance)
-            instance_dict[instance] = ifacts
+        # instance_dict = {}
+        # for instance in instances:
+        #     # ifacts = self.facts_from_vobj(instance)
+        #     ifacts = self.facts_from_proplist(instance)
+        #     instance_dict[instance] = ifacts
         # print(type(instance_dict))
-        pprint.pprint(instance_dict)
+        # pprint.pprint(instance_dict)
+        print("type(instances[0]):---->",type(instances[0]))
+
+        a = getattr(instances[0], 'config')
+        print("type(a),打印a的类型:")
+        print(type(a))
+        print("getattr(instances[0], config)的输出:")
+        pprint.pprint(a)
 
     def facts_from_proplist(self, vm):
         '''Get specific properties instead of serializing everything'''
@@ -309,9 +315,9 @@ class genInventory(object):
                 # pointer to the current result key
                 lastref = rdata
 
-                for idx, x in enumerate(parts):
+                for idx, x in enumerate(parts): #[(0, config),(1, cpuHotAddEnabled)]
 
-                    if isinstance(val, dict):
+                    if isinstance(val, dict): 
                         if x in val:
                             val = val.get(x)
                         elif x.lower() in val:
@@ -320,7 +326,7 @@ class genInventory(object):
                         # if the val wasn't set yet, get it from the parent
                         if not val:
                             try:
-                                val = getattr(vm, x)
+                                val = getattr(vm, x) #val = getattr(vm, config), see tmp_file/raw_vim.vm.ConfigInfo.txt
                             except AttributeError as e:
                                 self.debugl(e)
                         else:
@@ -331,7 +337,7 @@ class genInventory(object):
                                 self.debugl(e)
 
                         # make sure it serializes
-                        val = self._process_object_types(val)
+                        val = self._process_object_types(val) # self._process_object_types(val)这里传入的是tmp_file/raw_vim.vm.ConfigInfo.txt的内容
 
                     # lowercase keys if requested
                     if self.lowerkeys:
@@ -484,46 +490,6 @@ class genInventory(object):
 
         return rdata
 
-'''
-        # Create a search container for virtualmachines
-        self.debugl('creating containerview for virtualmachines')
-        container = content.rootFolder
-        viewType = [vim.VirtualMachine]
-        recursive = True
-        containerView = content.viewManager.CreateContainerView(container, viewType, recursive)
-        children = containerView.view
-        for child in children:
-            # If requested, limit the total number of instances
-            if self.args.max_instances:
-                if len(instances) >= self.args.max_instances:
-                    break
-            instances.append(child)
-        self.debugl("%s total instances in container view" % len(instances))
-
-        if self.args.host:
-            instances = [x for x in instances if x.name == self.args.host]
-
-        instance_tuples = []
-        for instance in instances:
-            if self.guest_props:
-                ifacts = self.facts_from_proplist(instance)
-            else:
-                ifacts = self.facts_from_vobj(instance)
-            instance_tuples.append((instance, ifacts))
-        self.debugl('facts collected for all instances')
-
-        try:
-            cfm = content.customFieldsManager
-            if cfm is not None and cfm.field:
-                for f in cfm.field:
-                    if not f.managedObjectType or f.managedObjectType == vim.VirtualMachine:
-                        self.custom_fields[f.key] = f.name
-                self.debugl('%d custom fields collected' % len(self.custom_fields))
-        except vmodl.RuntimeFault as exc:
-            self.debugl("Unable to gather custom fields due to %s" % exc.msg)
-        except IndexError as exc:
-            self.debugl("Unable to gather custom fields due to %s" % exc)
-'''
 
 if __name__ == "__main__":
     vcsa = genInventory()
