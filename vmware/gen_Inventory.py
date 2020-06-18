@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Wednesday June 17th 2020 10:56:42 pm
+# Last Modified: Thursday June 18th 2020 11:31:04 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -228,6 +228,26 @@ class genInventory(object):
         return methods
         # print("method:\n",methods) #all the method a vm object have
 
+    def get_type(self,vobj):
+        if vobj is None:
+            return 'None'
+        elif type(vobj) in self.vimTable:
+            return 'self.vimTable'
+        elif issubclass(type(vobj), str) or isinstance(vobj, str):
+            return 'str'
+        elif issubclass(type(vobj), bool) or isinstance(vobj, bool):
+            return 'bool'
+        elif issubclass(type(vobj), float) or isinstance(vobj, float):
+            return 'float'
+        elif issubclass(type(vobj), list) or issubclass(type(vobj), tuple):
+            return 'list'
+        elif issubclass(type(vobj), dict):
+            return 'dict'
+        elif issubclass(type(vobj), object):
+            return 'object'
+        else:
+            return 'final'
+
     def _get_instances(self, inkwargs):
         ''' 
         Make API calls
@@ -268,21 +288,34 @@ class genInventory(object):
         print('content.customFieldsManager:', cfm)
 
         print("vm对象可用方法集合:\n",self.get_method(instances[0]))
-
-        # instance_dict = {}
-        # for instance in instances:
-        #     # ifacts = self.facts_from_vobj(instance)
-        #     ifacts = self.facts_from_proplist(instance)
-        #     instance_dict[instance] = ifacts
-        # print(type(instance_dict))
-        # pprint.pprint(instance_dict)
+        '''
+        instance_dict = {}
+        for instance in instances:
+            ifacts = self.facts_from_vobj(instance)
+            # ifacts = self.facts_from_proplist(instance)
+            instance_dict[instance] = ifacts
+        print(type(instance_dict))
+        pprint.pprint(instance_dict)
+        '''
         print("type(instances[0]):---->",type(instances[0]))
-
+        #<class 'pyVmomi.VmomiSupport.vim.VirtualMachine'>
+        print(self.get_type(instances[0])) 
+        '''
         a = getattr(instances[0], 'config')
-        print("type(a),打印a的类型:")
+        b = getattr(instances[0], 'datastore')
+        print("type(a),打印a的类型:") #<class 'pyVmomi.VmomiSupport.vim.vm.ConfigInfo'>
         print(type(a))
-        print("getattr(instances[0], config)的输出:")
-        pprint.pprint(a)
+        print("type(a).__name__,打印a的名字:") #<class 'pyVmomi.VmomiSupport.vim.vm.ConfigInfo'>
+        print(type(a).__name__)   #vim.vm.ConfigInfo   
+
+        print("type(b),打印b的类型:") #<class 'pyVmomi.VmomiSupport.vim.vm.ConfigInfo'>
+        print(type(b))
+        print("type(b).__name__,打印b的名字:") #<class 'pyVmomi.VmomiSupport.vim.vm.ConfigInfo'>
+        print(type(b).__name__)   #vim.vm.ConfigInfo  
+         
+        # print("getattr(instances[0], config)的输出:")
+        # pprint.pprint(b._moId)
+        '''
 
     def facts_from_proplist(self, vm):
         '''Get specific properties instead of serializing everything'''
@@ -308,7 +341,7 @@ class genInventory(object):
             else:
                 # props with periods are subkeys of parent attributes
                 parts = prop.split('.')
-                total = len(parts) - 1
+                total = len(parts) - 1 #len(parts) = 2
 
                 # pointer to the current object
                 val = None
@@ -341,13 +374,13 @@ class genInventory(object):
 
                     # lowercase keys if requested
                     if self.lowerkeys:
-                        x = x.lower()
+                        x = x.lower() #for the first time,x is 'config'
 
                     # change the pointer or set the final value
-                    if idx != total:
-                        if x not in lastref:
-                            lastref[x] = {}
-                        lastref = lastref[x]
+                    if idx != total: #for the first run, idx = 0
+                        if x not in lastref:   #for the first run, lastref = {}
+                            lastref[x] = {}    #lastref[config] = {}
+                        lastref = lastref[x]   #lastref = lastref[config]
                     else:
                         lastref[x] = val
         # self.debugl("For %s" % vm.name)
@@ -409,13 +442,28 @@ class genInventory(object):
     def _process_object_types(self, vobj, thisvm=None, inkey='', level=0):
         ''' Serialize an object '''
         rdata = {}
-
-        if type(vobj).__name__ in self.vimTableMaxDepth and level >= self.vimTableMaxDepth[type(vobj).__name__]:
-            return rdata
+        #for the first run: type(vobj).__name__ = vim.vm.ConfigInfo
+        if type(vobj).__name__ in self.vimTableMaxDepth and level >= self.vimTableMaxDepth[type(vobj).__name__]: 
+            return rdata        
+        '''
+        #self.vimTableMaxDepth[type(vobj).__name__] = 2 ,所以这里的条件永远不成立
+        
+        vimTableMaxDepth = {
+            "vim.HostSystem": 2,
+            "vim.VirtualMachine": 2,
+        }
+        '''
 
         if vobj is None:
             rdata = None
         elif type(vobj) in self.vimTable:
+            '''
+            vimTable = {
+                vim.Datastore: ['_moId', 'name'],
+                vim.ResourcePool: ['_moId', 'name'],
+                vim.HostSystem: ['_moId', 'name'],
+            }
+            '''
             rdata = {}
             for key in self.vimTable[type(vobj)]:
                 try:
