@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Thursday June 18th 2020 11:31:04 pm
+# Last Modified: Friday June 19th 2020 3:53:09 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -228,7 +228,7 @@ class genInventory(object):
         return methods
         # print("method:\n",methods) #all the method a vm object have
 
-    def get_type(self,vobj):
+    def get_subclass(self,vobj):
         if vobj is None:
             return 'None'
         elif type(vobj) in self.vimTable:
@@ -298,24 +298,30 @@ class genInventory(object):
         pprint.pprint(instance_dict)
         '''
         print("type(instances[0]):---->",type(instances[0]))
+        print("get_subclass(instances[0]):---->",self.get_subclass(instances[0]))
         #<class 'pyVmomi.VmomiSupport.vim.VirtualMachine'>
-        print(self.get_type(instances[0])) 
-        '''
+        
+
         a = getattr(instances[0], 'config')
         b = getattr(instances[0], 'datastore')
         print("type(a),打印a的类型:") #<class 'pyVmomi.VmomiSupport.vim.vm.ConfigInfo'>
         print(type(a))
         print("type(a).__name__,打印a的名字:") #<class 'pyVmomi.VmomiSupport.vim.vm.ConfigInfo'>
         print(type(a).__name__)   #vim.vm.ConfigInfo   
+        print("get_subclass(a),判断a属于哪一类子类:") 
+        print(self.get_subclass(a))   #object
+
 
         print("type(b),打印b的类型:") #<class 'pyVmomi.VmomiSupport.vim.vm.ConfigInfo'>
         print(type(b))
         print("type(b).__name__,打印b的名字:") #<class 'pyVmomi.VmomiSupport.vim.vm.ConfigInfo'>
         print(type(b).__name__)   #vim.vm.ConfigInfo  
-         
+        print("get_subclass(b),判断b属于哪一类子类:") 
+        print(self.get_subclass(b))   #list
+
         # print("getattr(instances[0], config)的输出:")
         # pprint.pprint(b._moId)
-        '''
+
 
     def facts_from_proplist(self, vm):
         '''Get specific properties instead of serializing everything'''
