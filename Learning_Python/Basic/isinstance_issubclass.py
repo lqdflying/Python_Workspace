@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Friday June 19th 2020 5:06:45 pm
+# Last Modified: Friday June 19th 2020 6:14:49 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -23,25 +23,27 @@ class Vehicles:
 
 	# Constructor 
 	def __init__(self,vehicleType='default'): 
-		print('Vehicles is a', vehicleType) 
+		# print('Vehicles is a', vehicleType) 
+		self.vehicleType = vehicleType
 
 # Defining Child class 
 class Car(Vehicles): 
-
 	# Constructor 
 	def __init__(self): 
 		super().__init__('Car') 
 a = Car()
 b = Vehicles('boat')
 
-print(f"type(Vehicles()):{type(Vehicles())},and is its type Vehicles? {type(Vehicles()) == Vehicles} ",)
 print("Vehicles():--->",Vehicles())
-print(f"type(Car()):{type(Car())},and is its type Car? {type(Car()) == Car} ",)
 print("Car():--->",Car())
-print("type(a):--->",type(a))
 print("a:--->",a)
-print("type(b):--->",type(b))
 print("b:--->",b)
+
+print(f"type(Car()):{type(Car())},and is its type Car? {type(Car()) == Car} ",)
+print(f"type(a):{type(a)},and is its type Car? {type(a) == Car} ",)
+
+print(f"type(Vehicles()):{type(Vehicles())},and is its type Vehicles? {type(Vehicles()) == Vehicles} ",)
+print(f"type(b):{type(b)},and is its type Vehicles? {type(b) == Vehicles} ",)
 
 # Driver's code
 print("issubclass(Car, Vehicles):--->", issubclass(Car, Vehicles)) 
