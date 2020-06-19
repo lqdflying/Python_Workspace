@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Friday June 19th 2020 6:14:49 pm
+# Last Modified: Friday June 19th 2020 10:21:19 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -34,18 +34,29 @@ class Car(Vehicles):
 a = Car()
 b = Vehicles('boat')
 
+
+print("object".center(20,"+"))
 print("Vehicles():--->",Vehicles())
 print("Car():--->",Car())
 print("a:--->",a)
 print("b:--->",b)
 
-print(f"type(Car()):{type(Car())},and is its type Car? {type(Car()) == Car} ",)
-print(f"type(a):{type(a)},and is its type Car? {type(a) == Car} ",)
+print("type".center(20,"+"))
+print(f"type(Car()):--> {type(Car())}   and is its type 'Car'?----> {type(Car()) == Car} ",)
+print(f"type(Vehicles()):--> {type(Vehicles())}   and is its type 'Vehicles'?----> {type(Vehicles()) == Vehicles} ",)
+print(f"type(a):--> {type(a)}   and is its type 'Car'?----> {type(a) == Car} ",)
+print(f"type(b):--> {type(b)}   and is its type 'Vehicles'?----> {type(b) == Vehicles} ",)
 
-print(f"type(Vehicles()):{type(Vehicles())},and is its type Vehicles? {type(Vehicles()) == Vehicles} ",)
-print(f"type(b):{type(b)},and is its type Vehicles? {type(b) == Vehicles} ",)
+print("isinstance".center(20,"+"))
+print(f"isinstance(a, object): {isinstance(a, object)}")
+print(f"isinstance(a, Car): {isinstance(a, Car)}")
+print(f"isinstance(a, Vehicles): {isinstance(a, Vehicles)}")
+print(f"isinstance(a, (Car,Vehicles)): {isinstance(a, (Car,Vehicles))}")
+print(f"isinstance(a, str): {isinstance(a, str)}")
+print(f"isinstance(a, (Car,str)): {isinstance(a, (Car,str))}")
 
-# Driver's code
+print("issubclass".center(20,"+"))
+print("issubclass(Car, object):--->", issubclass(Car, object)) 
 print("issubclass(Car, Vehicles):--->", issubclass(Car, Vehicles)) 
 print("issubclass(Car, list):--->",issubclass(Car, list)) 
 print("issubclass(Car, Car):--->",issubclass(Car, Car)) 
