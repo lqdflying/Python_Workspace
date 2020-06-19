@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Friday June 19th 2020 3:53:09 pm
+# Last Modified: Friday June 19th 2020 10:42:40 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -288,7 +288,7 @@ class genInventory(object):
         print('content.customFieldsManager:', cfm)
 
         print("vm对象可用方法集合:\n",self.get_method(instances[0]))
-        '''
+        
         instance_dict = {}
         for instance in instances:
             ifacts = self.facts_from_vobj(instance)
@@ -296,6 +296,7 @@ class genInventory(object):
             instance_dict[instance] = ifacts
         print(type(instance_dict))
         pprint.pprint(instance_dict)
+        
         '''
         print("type(instances[0]):---->",type(instances[0]))
         print("get_subclass(instances[0]):---->",self.get_subclass(instances[0]))
@@ -318,9 +319,12 @@ class genInventory(object):
         print(type(b).__name__)   #vim.vm.ConfigInfo  
         print("get_subclass(b),判断b属于哪一类子类:") 
         print(self.get_subclass(b))   #list
-
+        for i in b:
+            print(type(i)) #<class 'pyVmomi.VmomiSupport.vim.Datastore'>
+            print(self.get_subclass(i)) #self.vimTable
         # print("getattr(instances[0], config)的输出:")
         # pprint.pprint(b._moId)
+        '''
 
 
     def facts_from_proplist(self, vm):
