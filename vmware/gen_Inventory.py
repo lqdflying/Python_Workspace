@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Friday June 19th 2020 10:42:40 pm
+# Last Modified: Saturday June 20th 2020 11:55:00 am
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -291,8 +291,8 @@ class genInventory(object):
         
         instance_dict = {}
         for instance in instances:
-            ifacts = self.facts_from_vobj(instance)
-            # ifacts = self.facts_from_proplist(instance)
+            # ifacts = self.facts_from_vobj(instance)
+            ifacts = self.facts_from_proplist(instance)
             instance_dict[instance] = ifacts
         print(type(instance_dict))
         pprint.pprint(instance_dict)
@@ -339,6 +339,23 @@ class genInventory(object):
 
             if '.' not in prop:
                 # props without periods are direct attributes of the parent
+                try:
+                    methodToCall = getattr(vm, prop)
+                except Exception as e:
+                    continue
+                
+                # Skip callable methods
+                if callable(methodToCall):
+                    continue
+                
+                if self.lowerkeys:
+                    prop = prop.lower()
+    
+                rdata[prop] = self._process_object_types(
+                    methodToCall,
+                    thisvm=vm
+                )
+                '''
                 vm_property = getattr(vm, prop)
                 if isinstance(vm_property, vim.CustomFieldsManager.Value.Array):
                     temp_vm_property = []
@@ -348,6 +365,7 @@ class genInventory(object):
                     rdata[key] = temp_vm_property
                 else:
                     rdata[key] = vm_property
+                '''    
             else:
                 # props with periods are subkeys of parent attributes
                 parts = prop.split('.')
