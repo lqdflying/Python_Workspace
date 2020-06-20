@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Saturday June 20th 2020 6:16:59 pm
+# Last Modified: Saturday June 20th 2020 10:04:08 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -291,11 +291,13 @@ class genInventory(object):
         
         instance_dict = {}
         for instance in instances:
-            # ifacts = self.facts_from_vobj(instance)
-            ifacts = self.facts_from_proplist(instance)
+            ifacts = self.facts_from_vobj(instance)
+            # ifacts = self.facts_from_proplist(instance)
             instance_dict[instance] = ifacts
-        print(type(instance_dict))
-        pprint.pprint(instance_dict)
+        print("输出数据类型:",type(instance_dict))
+        with open ("%s/tmp_file/json_vim_facts.txt"%(os.path.dirname(__file__)),"w+") as f:
+            f.write(pprint.pformat(instance_dict))
+        # pprint.pprint(instance_dict)
 
     def facts_from_proplist(self, vm):
         '''Get specific properties instead of serializing everything'''
@@ -333,14 +335,14 @@ class genInventory(object):
                 total = len(parts) - 1 #len(parts) = 2, so total = 1
 
                 # pointer to the current object
-                val = None
+                val = {}
                 
                 # pointer to the current result key
                 lastref = rdata
-                self.debugl('rdata type is %s' % (self.get_subclass(rdata)))
+
                 for idx, x in enumerate(parts): # [(0, config),(1, cpuHotAddEnabled)]
 
-                    if isinstance(val, dict): 
+                    if isinstance(val, dict) and len(val) != 0: 
                         if x in val:
                             val = val.get(x)
                         elif x.lower() in val:
@@ -375,13 +377,6 @@ class genInventory(object):
                     else:
                         lastref[x] = val
                         pass
-        # self.debugl("For %s" % vm.name)
-        # for key in list(rdata.keys()):
-        #     if isinstance(rdata[key], dict):
-        #         for ikey in list(rdata[key].keys()):
-        #             self.debugl("Property '%s.%s' has value '%s'" % (key, ikey, rdata[key][ikey]))
-        #     else:
-        #         self.debugl("Property '%s' has value '%s'" % (key, rdata[key]))
         return rdata
 
     def facts_from_vobj(self, vobj, level=0):

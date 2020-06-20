@@ -7,15 +7,18 @@ Example: Get guest info with folder and host placement
 """
 from __future__ import print_function
 
-from pyVmomi import vim
-
-from pyVim.connect import SmartConnectNoSSL, Disconnect
 
 import argparse
 import atexit
 import getpass
 import json
+import sys
 
+try:
+    from pyVmomi import vim, vmodl
+    from pyVim.connect import SmartConnectNoSSL, Disconnect
+except ImportError:
+    sys.exit("ERROR: This inventory script required 'pyVmomi' Python module, it was not able to load it")
 
 data = {}
 
