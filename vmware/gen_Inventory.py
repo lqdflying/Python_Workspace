@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Saturday June 20th 2020 11:55:00 am
+# Last Modified: Saturday June 20th 2020 6:16:59 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -296,36 +296,6 @@ class genInventory(object):
             instance_dict[instance] = ifacts
         print(type(instance_dict))
         pprint.pprint(instance_dict)
-        
-        '''
-        print("type(instances[0]):---->",type(instances[0]))
-        print("get_subclass(instances[0]):---->",self.get_subclass(instances[0]))
-        #<class 'pyVmomi.VmomiSupport.vim.VirtualMachine'>
-        
-
-        a = getattr(instances[0], 'config')
-        b = getattr(instances[0], 'datastore')
-        print("type(a),打印a的类型:") #<class 'pyVmomi.VmomiSupport.vim.vm.ConfigInfo'>
-        print(type(a))
-        print("type(a).__name__,打印a的名字:") #<class 'pyVmomi.VmomiSupport.vim.vm.ConfigInfo'>
-        print(type(a).__name__)   #vim.vm.ConfigInfo   
-        print("get_subclass(a),判断a属于哪一类子类:") 
-        print(self.get_subclass(a))   #object
-
-
-        print("type(b),打印b的类型:") #<class 'pyVmomi.VmomiSupport.vim.vm.ConfigInfo'>
-        print(type(b))
-        print("type(b).__name__,打印b的名字:") #<class 'pyVmomi.VmomiSupport.vim.vm.ConfigInfo'>
-        print(type(b).__name__)   #vim.vm.ConfigInfo  
-        print("get_subclass(b),判断b属于哪一类子类:") 
-        print(self.get_subclass(b))   #list
-        for i in b:
-            print(type(i)) #<class 'pyVmomi.VmomiSupport.vim.Datastore'>
-            print(self.get_subclass(i)) #self.vimTable
-        # print("getattr(instances[0], config)的输出:")
-        # pprint.pprint(b._moId)
-        '''
-
 
     def facts_from_proplist(self, vm):
         '''Get specific properties instead of serializing everything'''
@@ -333,10 +303,6 @@ class genInventory(object):
         rdata = {}
         for prop in self.guest_props:
             self.debugl('getting %s property for %s' % (prop, vm.name))
-            key = prop
-            if self.lowerkeys:
-                key = key.lower()
-
             if '.' not in prop:
                 # props without periods are direct attributes of the parent
                 try:
@@ -347,7 +313,13 @@ class genInventory(object):
                 # Skip callable methods
                 if callable(methodToCall):
                     continue
-                
+                '''
+                callable(object)
+                Return True if the object argument appears callable, False if not. If this returns True, 
+                it is still possible that a call fails, but if it is False, calling object will never succeed. 
+                Note that classes are callable (calling a class returns a new instance); 
+                instances are callable if their class has a __call__() method.
+                ''' 
                 if self.lowerkeys:
                     prop = prop.lower()
     
@@ -355,34 +327,25 @@ class genInventory(object):
                     methodToCall,
                     thisvm=vm
                 )
-                '''
-                vm_property = getattr(vm, prop)
-                if isinstance(vm_property, vim.CustomFieldsManager.Value.Array):
-                    temp_vm_property = []
-                    for vm_prop in vm_property:
-                        temp_vm_property.append({'key': vm_prop.key,
-                                                 'value': vm_prop.value})
-                    rdata[key] = temp_vm_property
-                else:
-                    rdata[key] = vm_property
-                '''    
             else:
                 # props with periods are subkeys of parent attributes
                 parts = prop.split('.')
-                total = len(parts) - 1 #len(parts) = 2
+                total = len(parts) - 1 #len(parts) = 2, so total = 1
 
                 # pointer to the current object
                 val = None
+                
                 # pointer to the current result key
                 lastref = rdata
-
-                for idx, x in enumerate(parts): #[(0, config),(1, cpuHotAddEnabled)]
+                self.debugl('rdata type is %s' % (self.get_subclass(rdata)))
+                for idx, x in enumerate(parts): # [(0, config),(1, cpuHotAddEnabled)]
 
                     if isinstance(val, dict): 
                         if x in val:
                             val = val.get(x)
                         elif x.lower() in val:
                             val = val.get(x.lower())
+                            self.debugl('var type is %s' % (self.get_subclass(val)))
                     else:
                         # if the val wasn't set yet, get it from the parent
                         if not val:
@@ -399,7 +362,7 @@ class genInventory(object):
 
                         # make sure it serializes
                         val = self._process_object_types(val) # self._process_object_types(val)这里传入的是tmp_file/raw_vim.vm.ConfigInfo.txt的内容
-
+                        self.debugl('val type is %s' % (self.get_subclass(val)))
                     # lowercase keys if requested
                     if self.lowerkeys:
                         x = x.lower() #for the first time,x is 'config'
@@ -411,6 +374,7 @@ class genInventory(object):
                         lastref = lastref[x]   #lastref = lastref[config]
                     else:
                         lastref[x] = val
+                        pass
         # self.debugl("For %s" % vm.name)
         # for key in list(rdata.keys()):
         #     if isinstance(rdata[key], dict):
