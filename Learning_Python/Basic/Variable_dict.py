@@ -23,3 +23,13 @@ info.pop("stu1103") #删除方法一
 del info["stu1102"] #删除方法二
 print("增删改后的字典最终形态",info)
 print("查找一个key是否存在",("other" in info))
+
+print("赋值在构建多级dict中的用法")
+rdata = {'name': 'SDKT_SDKTAP3_7.68.213'}
+# lastref = rdata.copy() #使用了copy()等同于是新创建一个dict,这时候不会和原dict联动
+lastref = rdata
+lastref['config'] = {}
+lastref = lastref['config']
+lastref['cpuhotaddenabled'] = False
+print("dict没有浅copy,赋值效果就是浅copy:\n",rdata)
+print("lastref实际上是指向rdata['config']的这个value的指针,它本身是也是一个dict,并且会导致rdata这个dict同步更新\n",lastref)
