@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Sunday June 21st 2020 10:13:34 pm
+# Last Modified: Sunday June 21st 2020 10:23:04 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -281,21 +281,8 @@ class genInventory(object):
         pprint.pprint(inventorys)
         
         '''
-        container = content.rootFolder
-        viewType = [vim.VirtualMachine]
-        recursive = True
-        containerView = content.viewManager.CreateContainerView(container, viewType, recursive)
-        print('containerView.view:', containerView.view)
-        
-        instance_dict = {}
-        for instance in instances:
-            ifacts = self.facts_from_vobj(instance)
-            # ifacts = self.facts_from_proplist(instance)
-            instance_dict[instance] = ifacts
-        print("输出数据类型:",type(instance_dict))
         with open ("%s/tmp_file/json_vim_facts.txt"%(os.path.dirname(__file__)),"w+") as f:
-            f.write(pprint.pformat(instance_dict))
-        # pprint.pprint(instance_dict)
+            f.write(pprint.pformat(inventorys))
         '''
 
     def _get_instances(self, inkwargs):
