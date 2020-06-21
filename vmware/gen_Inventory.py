@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Saturday June 20th 2020 10:04:08 pm
+# Last Modified: Sunday June 21st 2020 10:13:34 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -51,6 +51,7 @@ def regex_match(s, pattern):
         return True
     else:
         return False
+
 class genInventory(object):
     __name__ = 'genInventory'
     guest_props = False
@@ -94,8 +95,7 @@ class genInventory(object):
 
     def __init__(self):
         self.read_settings()
-        # self.inventory = self.get_instances()
-        # self.inventory = self.get_inventory_from_cache()
+        
     def debugl(self, text):
         try:
             text = str(text)
@@ -193,6 +193,35 @@ class genInventory(object):
         '''自定义属性信息'''
         print(self.guest_props)
 
+    def get_subclass(self,vobj):
+        if vobj is None:
+            return 'None'
+        elif type(vobj) in self.vimTable:
+            return 'self.vimTable'
+        elif issubclass(type(vobj), str) or isinstance(vobj, str):
+            return 'str'
+        elif issubclass(type(vobj), bool) or isinstance(vobj, bool):
+            return 'bool'
+        elif issubclass(type(vobj), float) or isinstance(vobj, float):
+            return 'float'
+        elif issubclass(type(vobj), list) or issubclass(type(vobj), tuple):
+            return 'list'
+        elif issubclass(type(vobj), dict):
+            return 'dict'
+        elif issubclass(type(vobj), object):
+            return 'object'
+        else:
+            return 'final'
+
+    def get_method(self,vobj):
+        methods = dir(vobj)
+        methods = [str(x) for x in methods if not x.startswith('_')]
+        methods = [x for x in methods if x not in self.bad_types]
+        methods = [x for x in methods if not x.lower() in self.skip_keys]
+        methods = sorted(methods)
+        return methods
+        # print("method:\n",methods) #all the method a vm object have
+
     def get_instances(self):
         ''' Get a list of vm instances with pyvmomi '''
         kwargs = {'host': self.server,
@@ -217,36 +246,57 @@ class genInventory(object):
             # Python 2.7.9 < or RHEL/CentOS 7.4 <
             pass
 
-        return self._get_instances(kwargs)
+        # return self._get_instances(kwargs)
+        return self._get_inventory_facts(kwargs)
 
-    def get_method(self,vobj):
-        methods = dir(vobj)
-        methods = [str(x) for x in methods if not x.startswith('_')]
-        methods = [x for x in methods if x not in self.bad_types]
-        methods = [x for x in methods if not x.lower() in self.skip_keys]
-        methods = sorted(methods)
-        return methods
-        # print("method:\n",methods) #all the method a vm object have
+    def _get_inventory_facts(self, inkwargs):
+        inventorys = {}
+        try:
+            si = SmartConnect(**inkwargs) 
+        except ssl.SSLError as connection_error:
+            if '[SSL: CERTIFICATE_VERIFY_FAILED]' in str(connection_error) and self.validate_certs:
+                sys.exit("Unable to connect to ESXi server due to %s, "
+                         "please specify validate_certs=False and try again" % connection_error)
 
-    def get_subclass(self,vobj):
-        if vobj is None:
-            return 'None'
-        elif type(vobj) in self.vimTable:
-            return 'self.vimTable'
-        elif issubclass(type(vobj), str) or isinstance(vobj, str):
-            return 'str'
-        elif issubclass(type(vobj), bool) or isinstance(vobj, bool):
-            return 'bool'
-        elif issubclass(type(vobj), float) or isinstance(vobj, float):
-            return 'float'
-        elif issubclass(type(vobj), list) or issubclass(type(vobj), tuple):
-            return 'list'
-        elif issubclass(type(vobj), dict):
-            return 'dict'
-        elif issubclass(type(vobj), object):
-            return 'object'
-        else:
-            return 'final'
+        except Exception as exc:
+            self.debugl("Unable to connect to ESXi server due to %s" % exc)
+            sys.exit("Unable to connect to ESXi server due to %s" % exc)
+
+        self.debugl('retrieving all instances')
+        if not si:
+            sys.exit("Could not connect to the specified host using specified "
+                     "username and password")
+        atexit.register(Disconnect, si)
+        content = si.RetrieveContent()
+        viewType = [vim.VirtualMachine]
+        recursive = True
+        cluster_list = content.rootFolder.childEntity[0].hostFolder.childEntity
+        for cluster in cluster_list:
+            inventorys[cluster.name] = {}
+            inventorys[cluster.name]['name'] = cluster.name
+            containerView = content.viewManager.CreateContainerView(cluster, viewType, recursive)
+            for vm in containerView.view: 
+                ifacts = self.facts_from_proplist(vm)
+                inventorys[cluster.name][vm] = ifacts
+        pprint.pprint(inventorys)
+        
+        '''
+        container = content.rootFolder
+        viewType = [vim.VirtualMachine]
+        recursive = True
+        containerView = content.viewManager.CreateContainerView(container, viewType, recursive)
+        print('containerView.view:', containerView.view)
+        
+        instance_dict = {}
+        for instance in instances:
+            ifacts = self.facts_from_vobj(instance)
+            # ifacts = self.facts_from_proplist(instance)
+            instance_dict[instance] = ifacts
+        print("输出数据类型:",type(instance_dict))
+        with open ("%s/tmp_file/json_vim_facts.txt"%(os.path.dirname(__file__)),"w+") as f:
+            f.write(pprint.pformat(instance_dict))
+        # pprint.pprint(instance_dict)
+        '''
 
     def _get_instances(self, inkwargs):
         ''' 
