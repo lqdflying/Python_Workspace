@@ -1,11 +1,11 @@
 # -*- coding:utf-8 -*-
 ###
-# File: gen_Inventory.py
-# Created Date: 2020-06-17
+# File: gen_vm_pro.py
+# Created Date: 2020-06-22
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Monday June 22nd 2020 12:36:11 pm
+# Last Modified: Monday June 22nd 2020 5:35:33 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -51,6 +51,9 @@ def regex_match(s, pattern):
         return True
     else:
         return False
+validIpAddressRegex = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+nbuNetWork = "^(?:9\\.7\\.65\\.)(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+validNetWork = "^(?:9\\.)(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){2}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
 
 class genInventory(object):
     __name__ = 'genInventory'
@@ -85,7 +88,6 @@ class genInventory(object):
         "vim.HostSystem": 2,
         "vim.VirtualMachine": 2,
     }
-
 
     vimTable = {
         vim.Datastore: ['_moId', 'name'],
@@ -278,58 +280,10 @@ class genInventory(object):
             for vm in containerView.view: 
                 ifacts = self.facts_from_proplist(vm)
                 inventorys[cluster.name][vm] = ifacts
-        pprint.pprint(inventorys)
+        # pprint.pprint(inventorys)
         
-        '''
-        with open ("%s/tmp_file/json_vim_facts.txt"%(os.path.dirname(__file__)),"w+") as f:
+        with open ("%s/tmp_file/real_vm_facts.txt"%(os.path.dirname(__file__)),"w+") as f:
             f.write(pprint.pformat(inventorys))
-        '''
-
-    def _get_instances(self, inkwargs):
-        ''' 
-        Make API calls
-        def SmartConnect(protocol='https', host='localhost', port=443, user='root', pwd='',
-                service="hostd", path="/sdk", connectionPoolTimeout=CONNECTION_POOL_IDLE_TIMEOUT_SEC,
-                preferredApiVersions=None, keyFile=None, certFile=None,
-                thumbprint=None, sslContext=None, b64token=None, mechanism='userpass'):
-            <...>
-        '''
-        instances = []
-        try:
-            si = SmartConnect(**inkwargs) 
-        except ssl.SSLError as connection_error:
-            if '[SSL: CERTIFICATE_VERIFY_FAILED]' in str(connection_error) and self.validate_certs:
-                sys.exit("Unable to connect to ESXi server due to %s, "
-                         "please specify validate_certs=False and try again" % connection_error)
-
-        except Exception as exc:
-            self.debugl("Unable to connect to ESXi server due to %s" % exc)
-            sys.exit("Unable to connect to ESXi server due to %s" % exc)
-
-        self.debugl('retrieving all instances')
-        if not si:
-            sys.exit("Could not connect to the specified host using specified "
-                     "username and password")
-        atexit.register(Disconnect, si)
-        content = si.RetrieveContent()
-        print('type(content):',type(content)) #<class 'pyVmomi.VmomiSupport.vim.ServiceInstanceContent'>
-        print('content.rootFolder:', content.rootFolder)
-        container = content.rootFolder
-        viewType = [vim.VirtualMachine]
-        recursive = True
-        containerView = content.viewManager.CreateContainerView(container, viewType, recursive)
-        print('containerView.view:', containerView.view)
-        for child in containerView.view: instances.append(child)
-        
-        instance_dict = {}
-        for instance in instances:
-            # ifacts = self.facts_from_vobj(instance)
-            ifacts = self.facts_from_proplist(instance)
-            instance_dict[instance] = ifacts
-        print("输出数据类型:",type(instance_dict))
-        with open ("%s/tmp_file/json_vim_facts.txt"%(os.path.dirname(__file__)),"w+") as f:
-            f.write(pprint.pformat(instance_dict))
-        # pprint.pprint(instance_dict)
 
     def facts_from_proplist(self, vm):
         '''Get specific properties instead of serializing everything'''
@@ -346,14 +300,7 @@ class genInventory(object):
                 
                 # Skip callable methods
                 if callable(methodToCall):
-                    continue
-                '''
-                callable(object)
-                Return True if the object argument appears callable, False if not. If this returns True, 
-                it is still possible that a call fails, but if it is False, calling object will never succeed. 
-                Note that classes are callable (calling a class returns a new instance); 
-                instances are callable if their class has a __call__() method.
-                ''' 
+                    continue 
                 if self.lowerkeys:
                     prop = prop.lower()
     
@@ -372,19 +319,18 @@ class genInventory(object):
                 # pointer to the current result key
                 lastref = rdata
 
-                for idx, x in enumerate(parts): # [(0, config),(1, cpuHotAddEnabled)]
+                for idx, x in enumerate(parts): 
 
                     if isinstance(val, dict) and len(val) != 0: 
                         if x in val:
                             val = val.get(x)
                         elif x.lower() in val:
                             val = val.get(x.lower())
-                            self.debugl('var type is %s' % (self.get_subclass(val)))
                     else:
                         # if the val wasn't set yet, get it from the parent
                         if not val:
                             try:
-                                val = getattr(vm, x) #val = getattr(vm, config), see tmp_file/raw_vim.vm.ConfigInfo.txt
+                                val = getattr(vm, x) 
                             except AttributeError as e:
                                 self.debugl(e)
                         else:
@@ -395,67 +341,23 @@ class genInventory(object):
                                 self.debugl(e)
 
                         # make sure it serializes
-                        val = self._process_object_types(val) # self._process_object_types(val)这里传入的是tmp_file/raw_vim.vm.ConfigInfo.txt的内容
-                        self.debugl('val type is %s' % (self.get_subclass(val)))
+                        # val = self._process_object_types(val)
+                        val = self._process_object_types(
+                            val,
+                            thisvm=vm
+                        )
                     # lowercase keys if requested
                     if self.lowerkeys:
-                        x = x.lower() #for the first time,x is 'config'
+                        x = x.lower() 
 
                     # change the pointer or set the final value
-                    if idx != total: #for the first run, idx = 0
-                        if x not in lastref:   #for the first run, lastref = {}
-                            lastref[x] = {}    #lastref[config] = {}
-                        lastref = lastref[x]   #lastref = lastref[config]
+                    if idx != total: 
+                        if x not in lastref:   
+                            lastref[x] = {}    
+                        lastref = lastref[x]   
                     else:
                         lastref[x] = val
-                        pass
-        return rdata
-
-    def facts_from_vobj(self, vobj, level=0):
-        ''' Traverse a VM object and return a json compliant data structure '''
-
-        # pyvmomi objects are not yet serializable, but may be one day ...
-        # https://github.com/vmware/pyvmomi/issues/21
-
-        # WARNING:
-        # Accessing an object attribute will trigger a SOAP call to the remote.
-        # Increasing the attributes collected or the depth of recursion greatly
-        # increases runtime duration and potentially memory+network utilization.
-        
-        if level == 0:
-            try:
-                self.debugl("get facts for %s" % vobj.name)
-            except Exception as e:
-                self.debugl(e)
-
-        rdata = {}
-
-        methods = dir(vobj)
-        methods = [str(x) for x in methods if not x.startswith('_')]
-        methods = [x for x in methods if x not in self.bad_types]
-        methods = [x for x in methods if not x.lower() in self.skip_keys]
-        methods = sorted(methods)
-
-        for method in methods:
-            # Attempt to get the method, skip on fail
-            try:
-                methodToCall = getattr(vobj, method)
-            except Exception as e:
-                continue
-
-            # Skip callable methods
-            if callable(methodToCall):
-                continue
-
-            if self.lowerkeys:
-                method = method.lower()
-
-            rdata[method] = self._process_object_types(
-                methodToCall,
-                thisvm=vobj,
-                inkey=method,
-            )
-
+                        
         return rdata
 
     def _process_object_types(self, vobj, thisvm=None, inkey='', level=0):
@@ -463,15 +365,7 @@ class genInventory(object):
         rdata = {}
         #for the first run: type(vobj).__name__ = vim.vm.ConfigInfo
         if type(vobj).__name__ in self.vimTableMaxDepth and level >= self.vimTableMaxDepth[type(vobj).__name__]: 
-            return rdata        
-        '''
-        #self.vimTableMaxDepth[type(vobj).__name__] = 2 ,所以这里的条件永远不成立
-        
-        vimTableMaxDepth = {
-            "vim.HostSystem": 2,
-            "vim.VirtualMachine": 2,
-        }
-        '''
+            return rdata
 
         if vobj is None:
             rdata = None
@@ -482,17 +376,30 @@ class genInventory(object):
                 vim.ResourcePool: ['_moId', 'name'],
                 vim.HostSystem: ['_moId', 'name'],
             }
-            '''
+            '''   
             rdata = {}
             for key in self.vimTable[type(vobj)]:
                 try:
                     rdata[key] = getattr(vobj, key)
                 except Exception as e:
                     self.debugl(e)
-
         elif issubclass(type(vobj), str) or isinstance(vobj, str):
             if vobj.isalnum():
                 rdata = vobj
+            elif regex_match(vobj, validIpAddressRegex): #ip address: 9.7.65.33 gw:9.7.68.254
+                if not regex_match(vobj, nbuNetWork) and regex_match(vobj, validNetWork):
+                    rdata = vobj
+                elif regex_match(vobj, nbuNetWork):
+                    gw = []
+                    for i in thisvm.guest.ipStack[0].ipRouteConfig.ipRoute: gw.append(i.gateway.ipAddress)
+                    if regex_match(list(filter(None, gw))[0], nbuNetWork):
+                        rdata = vobj
+                else:
+                    for i in thisvm.guest.net:
+                        for m in i.ipAddress:
+                            if regex_match(m, validNetWork):
+                                rdata = m
+                                break
             else:
                 rdata = vobj.encode('utf-8').decode('utf-8')
         elif issubclass(type(vobj), bool) or isinstance(vobj, bool):
