@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Tuesday June 23rd 2020 4:11:56 pm
+# Last Modified: Tuesday June 23rd 2020 4:28:07 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -423,10 +423,6 @@ class genFacts(genConfig):
             pass
 
         return rdata
-    '''
-    def process_info(self, num):
-        self.debugl("进程池共计初始化了{}个进程,当前子进程的PID是:{}".format(num,os.getpid()))
-    '''
 
     def get_facts_subprocessing(self):
         inventorys = {}
