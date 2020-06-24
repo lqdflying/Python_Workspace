@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Wednesday June 24th 2020 5:58:23 pm
+# Last Modified: Wednesday June 24th 2020 6:05:51 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -41,12 +41,12 @@ if __name__ == "__main__":
                 i.write(f"[{k}]\n")
             for n,m in v.items():
                 if regex_match(str(m['guest']['guestid']), type_linux) and not m['config']['template']:
-                    f_linux.write(f"{m['name'][:20]:25s}  ansible_host={str(m['guest']['ipaddress'])[:16]:25s} {'ansible_user=root'}  ostype={str(m['guest']['guestid']):25s}  hostname={str(m['guest']['hostname']).split('.')[0]:20s}  datastore={m['datastore'][0]['name']:20s} template={m['config']['template']}\n")
+                    f_linux.write(f"{m['name'][:25]:25s}  ansible_host={str(m['guest']['ipaddress'])[:16]:25s} {'ansible_user=root'}  ostype={str(m['guest']['guestid']):25s}  hostname={str(m['guest']['hostname']).split('.')[0]:20s}  datastore={m['datastore'][0]['name']:20s} template={m['config']['template']}\n")
                 elif regex_match(str(m['guest']['guestid']), type_win) and not m['config']['template']:
-                    f_windows.write(f"{m['name'][:20]:25s}  ansible_host={str(m['guest']['ipaddress'])[:16]:25s} {'ansible_user=root'}  ostype={str(m['guest']['guestid']):25s}  hostname={str(m['guest']['hostname']).split('.')[0]:20s}  datastore={m['datastore'][0]['name']:20s} template={m['config']['template']}\n")
+                    f_windows.write(f"{m['name'][:25]:25s}  ansible_host={str(m['guest']['ipaddress'])[:16]:25s} {'ansible_user=root'}  ostype={str(m['guest']['guestid']):25s}  hostname={str(m['guest']['hostname']).split('.')[0]:20s}  datastore={m['datastore'][0]['name']:20s} template={m['config']['template']}\n")
                 elif m['config']['template']:
-                    f_temp.write(f"{m['name'][:20]:25s}  ansible_host={str(m['guest']['ipaddress'])[:16]:25s} {'ansible_user=root'}  ostype={str(m['guest']['guestid']):25s}  hostname={str(m['guest']['hostname']).split('.')[0]:20s}  datastore={m['datastore'][0]['name']:20s} template={m['config']['template']}\n")
+                    f_temp.write(f"{m['name'][:25]:25s}  ansible_host={str(m['guest']['ipaddress'])[:16]:25s} {'ansible_user=root'}  ostype={str(m['guest']['guestid']):25s}  hostname={str(m['guest']['hostname']).split('.')[0]:20s}  datastore={m['datastore'][0]['name']:20s} template={m['config']['template']}\n")
                 else:
-                    f_other.write(f"{m['name'][:20]:25s}  ansible_host={str(m['guest']['ipaddress'])[:16]:25s} {'ansible_user=root'}  ostype={str(m['guest']['guestid']):25s}  hostname={str(m['guest']['hostname']).split('.')[0]:20s}  datastore={m['datastore'][0]['name']:20s} template={m['config']['template']}\n")
+                    f_other.write(f"{m['name'][:25]:25s}  ansible_host={str(m['guest']['ipaddress'])[:16]:25s} {'ansible_user=root'}  ostype={str(m['guest']['guestid']):25s}  hostname={str(m['guest']['hostname']).split('.')[0]:20s}  datastore={m['datastore'][0]['name']:20s} template={m['config']['template']}\n")
     end_time = datetime.datetime.now()
     print('\n开始时间:%s ---> 结束时间:%s \n时间差为:%s'%(start_time, end_time, (end_time - start_time)))
