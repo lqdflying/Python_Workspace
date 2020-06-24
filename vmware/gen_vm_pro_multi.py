@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Tuesday June 23rd 2020 4:28:07 pm
+# Last Modified: Wednesday June 24th 2020 4:55:55 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -448,13 +448,12 @@ class genFacts(genConfig):
         recursive = True
         cluster_obj = content.rootFolder.childEntity[0].hostFolder.childEntity[self.cluster_id]
         inventorys[cluster_obj.name] = {}
-        inventorys[cluster_obj.name]['name'] = cluster_obj.name
+        # inventorys[cluster_obj.name]['name'] = cluster_obj.name
         containerView = content.viewManager.CreateContainerView(cluster_obj, viewType, recursive)
         for vm in containerView.view: 
             ifacts = self.facts_from_proplist(self.cluster_id, vm)
             inventorys[cluster_obj.name][vm] = ifacts
         return inventorys
-
 
 def get_Cluster_facts(id):
     get_Cluster_facts = genFacts(id)
@@ -480,13 +479,94 @@ def main():
     p.join()
     # pprint.pprint(inventory_facts)
 
+result = {'SDK_TEST': {'name': 'SDK_TEST',
+              'vim.VirtualMachine:vm-17': {'config': {'name': 'vcsa_dev_7.68.210',
+                                                      'template': False},
+                                           'datastore': [{'_moId': 'datastore-11',
+                                                          'name': '68.25_Local'}],
+                                           'guest': {'guestid': 'sles11_64Guest',
+                                                     'gueststate': 'running',
+                                                     'hostname': 'localhost.localdom',
+                                                     'ipaddress': '9.7.68.210'},
+                                           'name': 'vcsa_dev_7.68.210'},
+              'vim.VirtualMachine:vm-18': {'config': {'name': 'RHEL7.5_Temp',
+                                                      'template': True},
+                                           'datastore': [{'_moId': 'datastore-11',
+                                                          'name': '68.25_Local'}],
+                                           'guest': {'guestid': None,
+                                                     'gueststate': 'notRunning',
+                                                     'hostname': None,
+                                                     'ipaddress': None},
+                                           'name': 'RHEL7.5_Temp'},
+              'vim.VirtualMachine:vm-19': {'config': {'name': 'Winserver2008R2_TMP',
+                                                      'template': True},
+                                           'datastore': [{'_moId': 'datastore-11',
+                                                          'name': '68.25_Local'}],
+                                           'guest': {'guestid': None,
+                                                     'gueststate': 'notRunning',
+                                                     'hostname': None,
+                                                     'ipaddress': None},
+                                           'name': 'Winserver2008R2_TMP'},
+              'vim.VirtualMachine:vm-26': {'config': {'name': 'SDKT_SDKTAP3_7.68.213',
+                                                      'template': False},
+                                           'datastore': [{'_moId': 'datastore-11',
+                                                          'name': '68.25_Local'}],
+                                           'guest': {'guestid': 'windows7Server64Guest',
+                                                     'gueststate': 'running',
+                                                     'hostname': 'HCDCSSDKTAP3',
+                                                     'ipaddress': '9.7.68.213'},
+                                           'name': 'SDKT_SDKTAP3_7.68.213'},
+              'vim.VirtualMachine:vm-32': {'config': {'name': 'RHEL6.5_Temp',
+                                                      'template': True},
+                                           'datastore': [{'_moId': 'datastore-11',
+                                                          'name': '68.25_Local'}],
+                                           'guest': {'guestid': None,
+                                                     'gueststate': 'notRunning',
+                                                     'hostname': None,
+                                                     'ipaddress': None},
+                                           'name': 'RHEL6.5_Temp'}},
+ 'SDK_TEST2': {'name': 'SDK_TEST2',
+               'vim.VirtualMachine:vm-36': {'config': {'name': 'SDKT_SDKTAP1_7.68.211',
+                                                       'template': False},
+                                            'datastore': [{'_moId': 'datastore-35',
+                                                           'name': '68.28_Local'}],
+                                            'guest': {'guestid': 'rhel7_64Guest',
+                                                      'gueststate': 'running',
+                                                      'hostname': 'HCDCSSDKTAP1',
+                                                      'ipaddress': '9.7.68.211'},
+                                            'name': 'SDKT_SDKTAP1_7.68.211'},
+               'vim.VirtualMachine:vm-37': {'config': {'name': 'SDKT_SDKTAP2_7.68.212',
+                                                       'template': False},
+                                            'datastore': [{'_moId': 'datastore-35',
+                                                           'name': '68.28_Local'}],
+                                            'guest': {'guestid': 'rhel6_64Guest',
+                                                      'gueststate': 'running',
+                                                      'hostname': 'HCDCSSDKTAP2',
+                                                      'ipaddress': '9.7.68.212'},
+                                            'name': 'SDKT_SDKTAP2_7.68.212'}}}
+
+
+class genIniData():
+    def __init__(self,indict):
+        self.indict = indict
+    def to_Ini_Linux(self):
+        print(type(self.indict))
+        print(self.indict)
+
 if __name__ == "__main__":
+
     start_time = datetime.datetime.now()
-    print('%s开始' % (datetime.datetime.now()))
     global final_facts
     final_facts = {}
+    # genIniData(result).to_Ini_Linux()
+    
+    
     main()
-    with open ("%s/tmp_file/real_vm_facts.txt"%(os.path.dirname(__file__)),"w+") as f:
+
+    with open ("%s/tmp_file/all_vm_facts.txt"%(os.path.dirname(__file__)),"w+") as f:
         f.write(pprint.pformat(final_facts))
+    
+    
     end_time = datetime.datetime.now()
-    print('开始时间:%s ---> 结束时间:%s'%(start_time, end_time))
+
+    print('\n开始时间:%s ---> 结束时间:%s \n时间差为:%s'%(start_time, end_time, (end_time - start_time)))
