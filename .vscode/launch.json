@@ -33,7 +33,7 @@
       "type": "python",
       "request": "launch",
       "module": "flask",
-      "stopOnEntry": true,
+      "stopOnEntry": false,
       "env": {
         "FLASK_APP": "${file}",
         "FLASK_ENV": "development",
