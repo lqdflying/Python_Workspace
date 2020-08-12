@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Wednesday August 12th 2020 11:17:54 am
+# Last Modified: Wednesday August 12th 2020 11:23:59 am
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -17,8 +17,8 @@
 import queue
 people = list(range(1,42))
 
-#版本一
-'''
+print("版本一:")
+
 def update_data(var):
     tmp = []
     for i in range(1,len(var)+1):
@@ -40,9 +40,9 @@ while len(result) > 2:
         result = update_data(result)
         print("第%s次:\n"%i,result)
     i += 1
-'''
 
-#版本二
+
+print("版本二:")
 q = queue.Queue()
 for i in people:
     q.put(i)
