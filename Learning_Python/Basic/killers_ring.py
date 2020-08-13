@@ -5,7 +5,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Wednesday August 12th 2020 11:23:59 am
+# Last Modified: Thursday August 13th 2020 8:43:52 am
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -17,7 +17,7 @@
 import queue
 people = list(range(1,42))
 
-print("版本一:")
+print("版本一(17lines):")
 
 def update_data(var):
     tmp = []
@@ -30,19 +30,13 @@ result = people
 i = 1
 while len(result) > 2:
     length = len(result)%3
-    if length:
-        end = result[-(length):]
-        result = update_data(result)
-        print(result)
-        result = end + result[:-(length)]
-        print("第%s次:\n"%i,result)
-    else:
-        result = update_data(result)
-        print("第%s次:\n"%i,result)
+    result = update_data(result)
+    result = result[(len(result)-length):] + result[:(len(result)-length)]
+    print("第%s次处理后:\n"%i,result)
     i += 1
 
 
-print("版本二:")
+print("版本二(13lines):")
 q = queue.Queue()
 for i in people:
     q.put(i)
@@ -54,5 +48,4 @@ while q.qsize() > 2:
     q.put(var1)
     q.put(var2)
 
-while not q.empty():
-    print(q.get())
+print(list(q.queue))
