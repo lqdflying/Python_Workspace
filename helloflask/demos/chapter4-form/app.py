@@ -128,6 +128,7 @@ def upload():
     return render_template('upload.html', form=form)
 
 
+
 @app.route('/multi-upload', methods=['GET', 'POST'])
 def multi_upload():
     form = MultiUploadForm()
@@ -166,6 +167,39 @@ def multi_upload():
         flash('Upload success.')
         session['filenames'] = filenames
         return redirect(url_for('show_images'))
+    return render_template('upload.html', form=form)
+
+
+@app.route('/multi-upload-adv', methods=['GET', 'POST'])
+def multi_upload_adv():
+    form = MultiUploadForm()
+
+    if request.method == 'POST':
+        filenames = []
+
+        if form.validate_on_submit():
+            f = form.photo.data
+
+            if 'photo' not in f:
+                flash('这里必须上传文件![不屏蔽客户端验证,这个报错永远出不来].%s'%(f))
+                return redirect(url_for('multi_upload_adv'))
+
+            for i in f:
+                if i and allowed_file(i.filename):
+                    filename = random_filename(i.filename)
+                    i.save(os.path.join(
+                        app.config['UPLOAD_PATH'], filename
+                    ))
+                    filenames.append(filename)
+                else:
+                    flash('无效文件类型!.')
+                    return redirect(url_for('multi_upload_adv'))
+            flash('上传成功!.')
+            session['filenames'] = filenames
+            return redirect(url_for('show_images'))
+        else:
+            flash('CSRF令牌错误[也可以验证].')
+            return redirect(url_for('multi_upload'))
     return render_template('upload.html', form=form)
 
 
