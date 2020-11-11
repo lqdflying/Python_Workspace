@@ -41,7 +41,7 @@ class UploadForm(FlaskForm):
 # multiple files upload form
 class MultiUploadForm(FlaskForm):
     # photo = MultipleFileField('Upload Image', validators=[DataRequired()]) #想强制服务器验证需要这里屏蔽客户端验证
-    photo = MultipleFileField('Upload Image')
+    photo = MultipleFileField('Upload Image', validators=[FileRequired(), FileAllowed(['jpg', 'jpeg', 'png', 'gif'])])
     submit = SubmitField()
 
 

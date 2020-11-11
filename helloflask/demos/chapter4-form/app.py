@@ -20,7 +20,7 @@ from forms import LoginForm, FortyTwoForm, NewPostForm, UploadForm, MultiUploadF
 app = Flask(__name__)
 app.config['ENV'] = 'development'
 app.config['DEBUG'] = 'True'
-app.secret_key = os.getenv('SECRET_KEY', 'secret string')
+app.secret_key = os.getenv('SECRET_KEY', '1234dsfaasdfasd(&^*&%')
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
 
@@ -180,8 +180,9 @@ def multi_upload_adv():
         if form.validate_on_submit():
             f = form.photo.data
 
-            if 'photo' not in f:
-                flash('这里必须上传文件![不屏蔽客户端验证,这个报错永远出不来].%s'%(f))
+        # check if the post request has the file part
+            if 'photo' not in request.files:
+                flash('This field is required.') #这一段代码无效,因为'photo' not in request.files永远是Flase,但是我不知道该怎么办
                 return redirect(url_for('multi_upload_adv'))
 
             for i in f:
