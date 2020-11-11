@@ -7,6 +7,7 @@
 """
 import os
 import uuid
+import click
 
 from flask import Flask, render_template, flash, redirect, url_for, request, send_from_directory, session
 from flask_ckeditor import CKEditor, upload_success, upload_fail
@@ -15,7 +16,7 @@ from flask_wtf.csrf import validate_csrf
 from wtforms import ValidationError
 from werkzeug.utils import secure_filename
 from forms import LoginForm, FortyTwoForm, NewPostForm, UploadForm, MultiUploadForm, SigninForm, \
-    RegisterForm, SigninForm2, RegisterForm2, RichTextForm
+    RegisterForm, SigninForm2, RegisterForm2, RichTextForm, MultiUploadFormAdv
 
 app = Flask(__name__)
 app.config['ENV'] = 'development'
@@ -172,18 +173,19 @@ def multi_upload():
 
 @app.route('/multi-upload-adv', methods=['GET', 'POST'])
 def multi_upload_adv():
-    form = MultiUploadForm()
+    form = MultiUploadFormAdv()
 
     if request.method == 'POST':
         filenames = []
 
         if form.validate_on_submit():
             f = form.photo.data
-
-        # check if the post request has the file part
-            if 'photo' not in request.files:
-                flash('This field is required.') #这一段代码无效,因为'photo' not in request.files永远是Flase,但是我不知道该怎么办
+            
+            # check if the post request has the file part
+            if not f[0].filename:
+                flash('至少要上传一个文件!')
                 return redirect(url_for('multi_upload_adv'))
+            
 
             for i in f:
                 if i and allowed_file(i.filename):
@@ -200,7 +202,7 @@ def multi_upload_adv():
             return redirect(url_for('show_images'))
         else:
             flash('CSRF令牌错误[也可以验证].')
-            return redirect(url_for('multi_upload'))
+            return redirect(url_for('multi_upload_adv'))
     return render_template('upload.html', form=form)
 
 
