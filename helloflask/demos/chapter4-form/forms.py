@@ -15,11 +15,11 @@ from wtforms.validators import DataRequired, Length, ValidationError, Email
 
 # 4.2.1 basic form example
 class LoginForm(FlaskForm):
-    username = StringField('Username', render_kw={'placeholder': 'liuqd'},validators=[DataRequired()])
+    username = StringField('用户名', render_kw={'placeholder': 'liuqd'},validators=[DataRequired()])
     # username = StringField('Username',validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(8, 128)])
-    remember = BooleanField('Remember me')
-    submit = SubmitField('Log in')
+    password = PasswordField('密码', validators=[DataRequired(), Length(8, 128)])
+    remember = BooleanField('记住我')
+    submit = SubmitField('登录')
 
 
 # custom validator
