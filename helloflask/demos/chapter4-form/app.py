@@ -9,6 +9,7 @@ import os
 import uuid
 import click
 
+from flask_bootstrap import Bootstrap
 from flask import Flask, render_template, flash, redirect, url_for, request, send_from_directory, session
 from flask_ckeditor import CKEditor, upload_success, upload_fail
 from flask_dropzone import Dropzone
@@ -48,7 +49,7 @@ app.config['DROPZONE_MAX_FILES'] = 30
 
 ckeditor = CKEditor(app)
 dropzone = Dropzone(app)
-
+bootstrap = Bootstrap(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
