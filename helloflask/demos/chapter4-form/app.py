@@ -49,7 +49,6 @@ app.config['DROPZONE_MAX_FILES'] = 30
 
 ckeditor = CKEditor(app)
 dropzone = Dropzone(app)
-bootstrap = Bootstrap(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
