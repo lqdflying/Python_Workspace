@@ -1,5 +1,5 @@
 {% macro form_field(field) %}
-    {{ field.label }}<br>
+    {{ "* " if field.flags.required }}{{ field.label }}<br>
     {{ field(**kwargs) }}<br>
     {% if field.errors -%}
         {% for error in field.errors -%}

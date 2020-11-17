@@ -17,11 +17,12 @@ from flask_wtf.csrf import validate_csrf
 from wtforms import ValidationError
 from werkzeug.utils import secure_filename
 from forms import LoginForm, FortyTwoForm, NewPostForm, UploadForm, MultiUploadForm, SigninForm, \
-    RegisterForm, SigninForm2, RegisterForm2, RichTextForm, MultiUploadFormAdv
+    RegisterForm, SigninForm2, RegisterForm2, RichTextForm, MultiUploadFormAdv, MyLoginForm
 
 app = Flask(__name__)
 app.config['ENV'] = 'development'
-app.config['DEBUG'] = 'True'
+app.config['DEBUG'] = True
+app.config['WTF_I18N_ENABLED'] = False
 app.secret_key = os.getenv('SECRET_KEY', '1234dsfaasdfasd(&^*&%')
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
@@ -68,6 +69,15 @@ def html():
 @app.route('/basic', methods=['GET', 'POST'])
 def basic():
     form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        flash('Welcome home, %s!' % username)
+        return redirect(url_for('index'))
+    return render_template('basic.html', form=form)
+
+@app.route('/mybasic', methods=['GET', 'POST'])
+def mybasic():
+    form = MyLoginForm()
     if form.validate_on_submit():
         username = form.username.data
         flash('Welcome home, %s!' % username)

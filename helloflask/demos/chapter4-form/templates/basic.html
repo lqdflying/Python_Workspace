@@ -8,8 +8,8 @@
     {{ form.csrf_token }}
     {{ form_field(form.username) }}<br>
     {# {{ form_field(form.username(placeholder='liuquandong')) }}<br> #}
-    {{ form.password.label }}<br>
-    {{ form.password }}<br>
+    {{ "* " if form.password.flags.required }}{{ form.password.label }}<br>
+    {{ form.password }}<br>
     {% if form.password.errors %}
         {% for message in form.password.errors %}
         <small class="error">{{ message }}</small><br>
