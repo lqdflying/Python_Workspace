@@ -17,7 +17,8 @@ from flask_wtf.csrf import validate_csrf
 from wtforms import ValidationError
 from werkzeug.utils import secure_filename
 from forms import LoginForm, FortyTwoForm, NewPostForm, UploadForm, MultiUploadForm, SigninForm, \
-    RegisterForm, SigninForm2, RegisterForm2, RichTextForm, MultiUploadFormAdv, MyLoginForm
+    RegisterForm, SigninForm2, RegisterForm2, RichTextForm, MultiUploadFormAdv, MyLoginForm, \
+        FortyTwoForm_adv
 
 app = Flask(__name__)
 app.config['ENV'] = 'development'
@@ -37,7 +38,7 @@ app.config['ALLOWED_EXTENSIONS'] = ['png', 'jpg', 'jpeg', 'gif']
 
 # Flask config
 # set request body's max length
-# app.config['MAX_CONTENT_LENGTH'] = 3 * 1024 * 1024  # 3Mb
+app.config['MAX_CONTENT_LENGTH'] = 3 * 1024 * 1024  # 3Mb
 
 # Flask-CKEditor config
 app.config['CKEDITOR_SERVE_LOCAL'] = True
@@ -97,7 +98,8 @@ def bootstrap():
 
 @app.route('/custom-validator', methods=['GET', 'POST'])
 def custom_validator():
-    form = FortyTwoForm()
+    # form = FortyTwoForm()
+    form = FortyTwoForm_adv()
     if form.validate_on_submit():
         flash('Bingo!')
         return redirect(url_for('index'))
@@ -135,7 +137,7 @@ def upload():
         f.save(os.path.join(app.config['UPLOAD_PATH'], filename))
         flash('Upload success.')
         session['filenames'] = [filename]
-        return redirect(url_for('show_images'))
+        return redirect(url_for('show_images')) # 注意这里是endpoint的名字（默认是视图函数的名字），返回的是router设置
     return render_template('upload.html', form=form)
 
 

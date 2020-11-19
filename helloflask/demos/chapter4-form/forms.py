@@ -44,6 +44,21 @@ class FortyTwoForm(FlaskForm):
             raise ValidationError('Must be 42.')
 
 
+#custom validator adv
+def is_42(message=None):
+    if message is None:
+        message = 'Must be 42.'
+
+    def _is_42(form, field):
+        if field.data != 42:
+            raise ValidationError(message)
+
+    return _is_42
+
+class FortyTwoForm_adv(FlaskForm):
+    answer = IntegerField('The Number', validators=[is_42(message='输入必须是42')])
+    submit = SubmitField()
+
 # upload form
 class UploadForm(FlaskForm):
     photo = FileField('Upload Image', validators=[FileRequired(), FileAllowed(['jpg', 'jpeg', 'png', 'gif'])])
