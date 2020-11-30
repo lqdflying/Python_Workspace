@@ -255,14 +255,21 @@ def multi_form():
     signin_form = SigninForm()
     register_form = RegisterForm()
 
-    if signin_form.submit1.data and signin_form.validate():
-        username = signin_form.username.data
-        flash('%s, you just submit the Signin Form.' % username)
-        return redirect(url_for('index'))
-
     if register_form.submit2.data and register_form.validate():
+    # if register_form.validate_on_submit():
         username = register_form.username.data
         flash('%s, you just submit the Register Form.' % username)
+        # click.echo("signin_form:validate():%s//is_submitted():%s"%(signin_form.validate(),signin_form.is_submitted()))
+        # click.echo("register_form: validate():%s//is_submitted():%s"%(register_form.validate(),register_form.is_submitted()))
+        return redirect(url_for('index'))
+
+
+    if signin_form.submit1.data and signin_form.validate():
+    # if signin_form.validate_on_submit():
+        username = signin_form.username.data
+        # click.echo("signin_form:validate():%s//is_submitted():%s"%(signin_form.validate(),signin_form.is_submitted()))
+        # click.echo("register_form: validate():%s//is_submitted():%s"%(register_form.validate(),register_form.is_submitted()))
+        flash('%s, you just submit the Signin Form.' % username)
         return redirect(url_for('index'))
 
     return render_template('2form.html', signin_form=signin_form, register_form=register_form)
