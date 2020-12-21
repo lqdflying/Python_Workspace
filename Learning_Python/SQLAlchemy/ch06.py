@@ -1,10 +1,10 @@
 ###
 # File: ch06.py
-# Created Date: 2020-12-17
+# Created Date: 2020-12-21
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Thursday December 17th 2020 5:25:20 pm
+# Last Modified: Monday December 21st 2020 5:29:52 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -13,7 +13,6 @@
 # Date      	 By	Comments
 # ----------	---	----------------------------------------------------------
 ###
-
 # To add a new cell, type '# %%'
 # To add a new markdown cell, type '# %% [markdown]'
 # %%
@@ -32,8 +31,13 @@ class Cookie(Base):
     quantity = Column(Integer())
     unit_cost = Column(Numeric(12, 2))
 
-# %% [markdown]
-# Cookie.__table__
+
+# %%
+Cookie.__table__
+
+# %% 
+dir(Cookie)
+
 
 # %%
 from datetime import datetime
