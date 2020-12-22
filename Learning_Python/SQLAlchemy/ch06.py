@@ -4,7 +4,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Monday December 21st 2020 5:29:52 pm
+# Last Modified: Tuesday December 22nd 2020 3:17:00 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -84,7 +84,9 @@ class LineItems(Base):
 
 # %%
 from sqlalchemy import create_engine
-engine = create_engine('sqlite:///:memory:')
+# engine = create_engine('sqlite:///:memory:')
+engine = create_engine('mysql+pymysql://liuqd:liuquandong'  
+                       '@localhost/liuqd', pool_recycle=3600)
 
 Base.metadata.create_all(engine)
 
