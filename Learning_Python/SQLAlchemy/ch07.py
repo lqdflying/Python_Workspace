@@ -4,7 +4,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Tuesday December 22nd 2020 5:04:17 pm
+# Last Modified: Sunday December 27th 2020 7:19:21 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -22,6 +22,7 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, Numeric, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.sql import select, func
 
 
 Base = declarative_base()
@@ -93,16 +94,22 @@ class LineItem(Base):
 
 # %%
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 engine = create_engine('mysql+pymysql://liuqd:liuquandong'  
                        '@localhost/liuqd', pool_recycle=3600)
 
+
+# %%
+from sqlalchemy.orm import sessionmaker
 Session = sessionmaker(bind=engine)
 
 session = Session()
 
 # Base.metadata.create_all(engine)
+
+# %%
+# print(session)
+dir(session)
 
 
 # %%
@@ -172,6 +179,24 @@ c1.cookie_id
 cookies = session.query(Cookie).all()
 print(cookies)
 
+# %%
+print(type(cookies))
+
+# %%
+first_row = cookies[0]
+print(first_row)
+
+# %%
+cookies = session.query(Cookie)
+first_row = cookies[0]
+
+# %%
+print(type(first_row))
+# first_row.cookie_name
+# first_row[cookies.cookie_name]
+
+# %%
+dir(first_row)
 
 # %%
 for cookie in session.query(Cookie):  
@@ -179,17 +204,20 @@ for cookie in session.query(Cookie):
 
 
 # %%
-print(session.query(Cookie.cookie_name, Cookie.quantity).first())
+result = session.query(Cookie.cookie_name, Cookie.quantity)
+print(result.all())
 
 
 # %%
-for cookie in session.query(Cookie).order_by(Cookie.quantity):
+result = session.query(Cookie).order_by(Cookie.quantity)
+for cookie in result:
     print('{:3} - {}'.format(cookie.quantity, cookie.cookie_name))
 
 
 # %%
 from sqlalchemy import desc
-for cookie in session.query(Cookie).order_by(desc(Cookie.quantity)):
+result = session.query(Cookie).order_by(desc(Cookie.quantity))
+for cookie in result:
     print('{:3} - {}'.format(cookie.quantity, cookie.cookie_name))
 
 
@@ -204,7 +232,7 @@ print([result.cookie_name for result in query])
 
 
 # %%
-from sqlalchemy import func
+
 inv_count = session.query(func.sum(Cookie.quantity)).scalar()
 print(inv_count)
 
@@ -222,7 +250,7 @@ print(rec_count.inventory_count)
 
 
 # %%
-record = session.query(Cookie).filter(Cookie.cookie_name == 'chocolate chip').first()
+record = session.query(Cookie).filter(Cookie.cookie_name == 'chocolate chip')
 print(record)
 
 
@@ -232,7 +260,12 @@ print(record)
 
 
 # %%
-query = session.query(Cookie).filter(Cookie.cookie_name.like('%chocolate%'))
+query = session.query(Cookie).filter(Cookie.cookie_name.like('%chocolate%')).filter(Cookie.quantity==12)
+for record in query:                       
+    print(record.cookie_name)
+
+# %%
+query = session.query(Cookie).filter(Cookie.cookie_name.like('%chocolate%'), Cookie.quantity==12)
 for record in query:                       
     print(record.cookie_name)
 
@@ -255,8 +288,10 @@ for result in query:
 # %%
 from sqlalchemy import and_, or_, not_
 query = session.query(Cookie).filter(
-    Cookie.quantity > 23,
-    Cookie.unit_cost < 0.40
+    and_(
+        Cookie.quantity > 23,
+        Cookie.unit_cost < 0.40
+    )
 )
 for result in query:
     print(result.cookie_name)
@@ -276,7 +311,11 @@ for result in query:
 
 # %%
 query = session.query(Cookie)
+
+# %%
 cc_cookie = query.filter(Cookie.cookie_name == "chocolate chip").first()
+
+# %%
 cc_cookie.quantity = cc_cookie.quantity + 120
 session.commit()
 print(cc_cookie.quantity)
@@ -300,6 +339,13 @@ session.commit()
 dcc_cookie = query.first()
 print(dcc_cookie)
 
+# %%
+query = session.query(Cookie)
+query = query.filter(Cookie.cookie_name == "dark chocolate chip")
+query.delete()
+session.commit()
+dcc_cookie = query.first()
+print(dcc_cookie)
 
 # %%
 query = session.query(Cookie)
@@ -330,7 +376,7 @@ session.commit()
 
 # %%
 o1 = Order()
-o1.user = cookiemon
+o1.user = cookiemon # 上边这条限定了orders表项不管添加几行,其user_id固定是1(因为cookiemon的user_id是1),而order_id是自增的主键,因此也就定了就是1
 session.add(o1)
 
 cc = session.query(Cookie).filter(Cookie.cookie_name == 
@@ -340,10 +386,10 @@ line1 = LineItem(cookie=cc, quantity=2, extended_cost=1.00)
 pb = session.query(Cookie).filter(Cookie.cookie_name == 
                                   "peanut butter").one()
 line2 = LineItem(quantity=12, extended_cost=3.00)
-line2.cookie = pb 
-line2.order = o1
+line2.cookie = pb #此条限定了line2这一行的cookie_id是4(因为"peanut butter"的cookie_id是4)
+# line2.order = o1 #我觉得这句没意义
 
-o1.line_items.append(line1)
+o1.line_items.append(line1) #Order()类中的的line_items是在LineItem表中通过backref定义出来的
 o1.line_items.append(line2)
 session.commit()
 
@@ -373,7 +419,16 @@ query = session.query(Order.order_id, User.username, User.phone,
                       LineItem.extended_cost)
 query = query.join(User).join(LineItem).join(Cookie)
 results = query.filter(User.username == 'cookiemon').all()
-print(results)
+for row in results:
+    print(row)
+
+# %%
+query = session.query(User.username,Order.order_id)
+# query = query.join(Order,isouter=True) #这样写也可以
+query = query.outerjoin(Order)
+results = query.all()
+for row in results:
+    print(row)
 
 
 # %%
