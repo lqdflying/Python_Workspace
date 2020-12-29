@@ -1,10 +1,10 @@
 ###
-# File: ch02.py
-# Created Date: 2020-12-22
+# File: ch03.py
+# Created Date: 2020-12-29
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Tuesday December 29th 2020 2:44:06 pm
+# Last Modified: Tuesday December 29th 2020 3:12:25 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -15,13 +15,11 @@
 ###
 # To add a new cell, type '# %%'
 # To add a new markdown cell, type '# %% [markdown]'
-# %% 
+# %%
 from datetime import datetime
 
 from sqlalchemy import (MetaData, Table, Column, Integer, Numeric, String,
                         DateTime, ForeignKey, Boolean, create_engine)
-from sqlalchemy.sql import select, func
-
 metadata = MetaData()
 
 cookies = Table('cookies', metadata,
@@ -57,10 +55,8 @@ line_items = Table('line_items', metadata,
     Column('extended_cost', Numeric(12, 2))
 )
 
-# engine = create_engine('sqlite:///:memory:')
-engine = create_engine('mysql+pymysql://liuqd:liuquandong'  
-                       '@localhost/liuqd', pool_recycle=3600)
-# metadata.create_all(engine)
+engine = create_engine('sqlite:///:memory:')
+metadata.create_all(engine)
 
 
 # %%
@@ -85,9 +81,6 @@ ins.compile().params
 # %%
 result = connection.execute(ins)
 
-# %%
-print(type(result))
-# dir(result)
 
 # %%
 result.inserted_primary_key
@@ -142,7 +135,7 @@ result = connection.execute(ins, inventory_list)
 
 
 # %%
-
+from sqlalchemy.sql import select
 
 
 # %%
@@ -160,24 +153,14 @@ rp = connection.execute(s)
 # %%
 results = rp.fetchall()
 
-# %%
-print(results)
-
 
 # %%
 first_row = results[0]
 
-# %%
-type(first_row)
-
-# %%
-dir(first_row)
 
 # %%
 first_row[1]
 
-# %%
-print(type(first_row))
 
 # %%
 first_row.cookie_name
@@ -203,20 +186,20 @@ for record in rp:
 # %%
 s = select([cookies.c.cookie_name, cookies.c.quantity])
 rp = connection.execute(s)
+print(rp.keys())
 results = rp.fetchall()
 
-# %%
-print(rp.keys())
-print(results)
 
+# %%
+results
 
 
 # %%
 s = select([cookies.c.cookie_name, cookies.c.quantity])
-s = s.order_by(cookies.c.quantity)
+s = s.order_by(cookies.c.quantity, cookies.c.cookie_name)
 rp = connection.execute(s)
 for cookie in rp:
-    print('{:<3} - {}'.format(cookie.quantity, cookie.cookie_name))
+    print('{} - {}'.format(cookie.quantity, cookie.cookie_name))
 
 
 # %%
@@ -225,42 +208,25 @@ s = select([cookies.c.cookie_name, cookies.c.quantity])
 s = s.order_by(desc(cookies.c.quantity))
 rp = connection.execute(s)
 for cookie in rp:
-    print('{:3} - {}'.format(cookie.quantity, cookie.cookie_name))
+    print('{} - {}'.format(cookie.quantity, cookie.cookie_name))
+
 
 # %%
 s = select([cookies.c.cookie_name, cookies.c.quantity])
 s = s.order_by(cookies.c.quantity)
 s = s.limit(2)
 rp = connection.execute(s)
-print(rp.fetchall()) #如果执行了这一句,rp就空了,下一条再取值就没值了
 print([result.cookie_name for result in rp])
 
-# %%
-s = select([cookies.c.cookie_name, cookies.c.quantity])
-s = s.order_by(cookies.c.quantity)
-s = s.limit(2)
-rp = connection.execute(s)
 
 # %%
-print(type(rp))
-result = rp.fetchall() 
-print(type(result))
-print(result)
-print([i.cookie_name for i in result])
+from sqlalchemy.sql import func
 
-# %%
-s = select([func.sum(cookies.c.quantity)]) 
-rp = connection.execute(s) 
-print(rp.scalar())
 
 # %%
 s = select([func.count(cookies.c.cookie_name)])
 rp = connection.execute(s)
-# print(rp.scalar())
-
-# %%
-record = rp.first() #sqlalchemy.engine.result.RowProxy
-# record = rp.scalar() #int
+record = rp.first()
 print(record.keys())
 print(record.count_1)
 
@@ -281,7 +247,7 @@ print(record.items())
 
 
 # %%
-s = select([cookies]).where(cookies.c.cookie_name.like('%chocolate%')) .where(cookies.c.quantity == 12)
+s = select([cookies]).where(cookies.c.cookie_name.like('%chocolate%')).where(cookies.c.quantity == 12)
 rp = connection.execute(s)
 for record in rp.fetchall():
     print(record.cookie_name)
@@ -328,24 +294,20 @@ for row in connection.execute(s):
 
 # %%
 from sqlalchemy import and_, or_, not_
-s = select([cookies]).where(
-    and_(
-        cookies.c.quantity > 23,
-        cookies.c.unit_cost < 0.40
-    )
-)
+s = select([cookies]).where(and_(
+    cookies.c.quantity > 23,
+    cookies.c.unit_cost < 0.40
+))
 for row in connection.execute(s):
     print(row.cookie_name)
 
 
 # %%
 from sqlalchemy import and_, or_, not_
-s = select([cookies]).where(
-    or_(
-        cookies.c.quantity.between(10, 50),
-        cookies.c.cookie_name.contains('chip')
-    )
-)
+s = select([cookies]).where(or_(
+    cookies.c.quantity.between(10, 50),
+    cookies.c.cookie_name.contains('chip')
+))
 for row in connection.execute(s):
     print(row.cookie_name)
 
@@ -366,22 +328,14 @@ for key in result.keys():
 
 
 # %%
-s = select([cookies]).where(cookies.c.cookie_name == "dark chocolate chip")
-result = connection.execute(s).fetchall()
-print(len(result))
-
-# %%
 from sqlalchemy import delete
 u = delete(cookies).where(cookies.c.cookie_name == "dark chocolate chip")
 result = connection.execute(u)
 print(result.rowcount)
+s = select([cookies]).where(cookies.c.cookie_name == "dark chocolate chip")
+result = connection.execute(s).fetchall()
+print(len(result))
 
-# %%
-# s = select([cookies]).where(cookies.c.cookie_name == "dark chocolate chip")
-# u = s.delete()
-u = cookies.delete().where(cookies.c.cookie_name == "dark chocolate chip")
-result = connection.execute(u)
-print(result.rowcount)
 
 # %%
 print(result)
@@ -416,7 +370,6 @@ result = connection.execute(ins, customer_list)
 
 
 # %%
-from sqlalchemy import insert
 ins = insert(orders).values(user_id=1, order_id=1)
 result = connection.execute(ins)
 
@@ -555,5 +508,3 @@ stmt = select([users]).where(text('username="cookiemon"'))
 print(connection.execute(stmt).fetchall())
 
 
-
-# %%

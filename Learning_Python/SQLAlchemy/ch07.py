@@ -4,7 +4,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Sunday December 27th 2020 7:19:21 pm
+# Last Modified: Tuesday December 29th 2020 11:41:34 am
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -433,10 +433,10 @@ for row in results:
 
 # %%
 query = session.query(User.username, func.count(Order.order_id))
-query = query.outerjoin(Order).group_by(User.username)
+query = query.outerjoin(Order)
+query = query.group_by(User.username)
 for row in query:
     print(row)
-
 
 # %%
 class Employee(Base):
