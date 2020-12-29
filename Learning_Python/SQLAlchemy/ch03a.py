@@ -43,7 +43,7 @@ users = Table('users', metadata,
 )
 
 orders = Table('orders', metadata,
-    Column('order_id', Integer()),
+    Column('order_id', Integer(),index=True),
     Column('user_id', ForeignKey('users.user_id')),
     Column('shipped', Boolean(), default=False)
 )
@@ -56,20 +56,21 @@ line_items = Table('line_items', metadata,
     Column('extended_cost', Numeric(12, 2))
 )
 
-engine = create_engine('sqlite:///:memory:')
+engine = create_engine('mysql+pymysql://liuqd:liuquandong'  
+                       '@localhost/liuqd', pool_recycle=3600)
 metadata.create_all(engine)
 connection = engine.connect()
 
 
 # %%
 from sqlalchemy import select, insert
-ins = insert(users).values(
+ins1 = insert(users).values(
     username="cookiemon",
     email_address="mon@cookie.com",
     phone="111-111-1111",
     password="password"
 )
-result = connection.execute(ins)
+result = connection.execute(ins1)
 
 
 # %%
@@ -86,13 +87,13 @@ connection.execute(s).fetchall()
 
 
 # %%
-ins = insert(users).values(
+ins2 = insert(users).values(
     username="cookiemon",
     email_address="damon@cookie.com",
     phone="111-111-1111",
     password="password"
 )
-result = connection.execute(ins)
+result = connection.execute(ins2)
 
 
 # %%
@@ -106,7 +107,9 @@ ins = insert(users).values(
 try:
     result = connection.execute(ins)
 except IntegrityError as error:
-    print(error.orig.message, error.params)
+    print("[error.statement]: ",error.statement)
+    print("[error.params]: ",error.params)
+    print("[error.orig]: ",error.orig)
 
 
 # %%
