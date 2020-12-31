@@ -4,7 +4,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Thursday December 31st 2020 7:27:08 pm
+# Last Modified: Thursday December 31st 2020 10:26:16 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -44,7 +44,7 @@ users = Table('users', metadata,
 )
 
 orders = Table('orders', metadata,
-    Column('order_id', Integer(),index=True),
+    Column('order_id', Integer(), primary_key=True, index=True),
     Column('user_id', ForeignKey('users.user_id')),
     Column('shipped', Boolean(), default=False)
 )
@@ -200,9 +200,6 @@ ship_it(2)
 # %%
 s = select([cookies.c.cookie_name, cookies.c.quantity])
 connection.execute(s).fetchall()
-
-
-# %%
 
 
 

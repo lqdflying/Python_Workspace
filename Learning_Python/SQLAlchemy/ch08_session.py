@@ -1,10 +1,10 @@
 ###
-# File: ch08b.py
-# Created Date: 2020-12-29
+# File: ch08_session.py
+# Created Date: 2020-12-31
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Thursday December 31st 2020 3:15:44 pm
+# Last Modified: Thursday December 31st 2020 10:50:58 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -15,24 +15,14 @@
 ###
 # To add a new cell, type '# %%'
 # To add a new markdown cell, type '# %% [markdown]'
-# %%
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-engine = create_engine('sqlite:///:memory:')
-
-Session = sessionmaker(bind=engine)
-
-session = Session()
-
 
 # %%
 from datetime import datetime
 
-from sqlalchemy import Table, Column, Integer, Numeric, String, DateTime, ForeignKey, Boolean, CheckConstraint
+from sqlalchemy import Column, Integer, Numeric, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
-
+from sqlalchemy import create_engine
 
 Base = declarative_base()
 
@@ -113,99 +103,154 @@ class LineItem(Base):
                          "cookie_id={self.cookie_id}, " \
                          "quantity={self.quantity}, " \
                          "extended_cost={self.extended_cost})".format( 
-                    self=self)
-    
+                    self=self) 
+
+engine = create_engine('mysql+pymysql://liuqd:liuquandong'  
+                       '@localhost/liuqd', pool_recycle=3600)
+
 Base.metadata.create_all(engine)
 
 
 # %%
-cookiemon = User('cookiemon', 'mon@cookie.com', '111-111-1111', 'password')
-cc = Cookie('chocolate chip', 'http://some.aweso.me/cookie/recipe.html', 'CC01', 12, 0.50)
+from sqlalchemy.orm import sessionmaker
+
+Session = sessionmaker(bind=engine)
+
+session = Session()
+
+
+
+
+# %%
+cc_cookie = Cookie('chocolate chip', 
+                   'http://some.aweso.me/cookie/recipe.html', 
+                   'CC01', 12, 0.50)
+
+
+# %%
+from sqlalchemy import inspect
+insp = inspect(cc_cookie)
+
+
+# %%
+for state in ['transient', 'pending', 'persistent', 'detached']:
+    print('{:>10}: {}'.format(state, getattr(insp, state)))
+
+
+# %%
+session.add(cc_cookie)
+
+
+# %%
+for state in ['transient','pending','persistent','detached']:
+    print('{:>10}: {}'.format(state, getattr(insp, state)))
+
+
+# %%
+session.commit()
+
+
+# %%
+for state in ['transient','pending','persistent','detached']:
+    print('{:>10}: {}'.format(state, getattr(insp, state)))
+
+
+# %%
+session.expunge(cc_cookie)
+
+
+# %%
+for state in ['transient','pending','persistent','detached']:
+    print('{:>10}: {}'.format(state, getattr(insp, state)))
+
+
+# %%
+session.add(cc_cookie)
+cc_cookie.cookie_name = 'Change chocolate chip'
+
+
+# %%
+insp.modified
+
+
+# %%
+for attr, attr_state in insp.attrs.items():
+    if attr_state.history.has_changes():
+        print('{}: {}'.format(attr, attr_state.value))
+        print('History: {}\n'.format(attr_state.history))
+
+
+# %%
 dcc = Cookie('dark chocolate chip',
              'http://some.aweso.me/cookie/recipe_dark.html',
-             'CC02',
-             1,
-             0.75)
-session.add(cookiemon)
-session.add(cc)
+             'CC02', 1, 0.75)
 session.add(dcc)
+session.commit()
 
 
 # %%
-o1 = Order()
-o1.user = cookiemon
+results = session.query(Cookie).one()
+
+
+# %%
+from sqlalchemy.orm.exc import MultipleResultsFound
+try:
+    results = session.query(Cookie).one()
+except MultipleResultsFound as exc:
+    # print(dir(exc))
+    print('We found too many cookies... is that even possible?')
+
+
+# %%
+session.query(Cookie).all()
+
+
+# %%
+# cookiemon = User('cookiemon', 'mon@cookie.com', '111-111-1111', 'password')
+cookiemon = session.query(User).filter(User.username == "cookiemon").first()
+o1 = Order(order_id=1,user=cookiemon)
 session.add(o1)
-
-line1 = LineItem(order=o1, cookie=cc, quantity=9, extended_cost=4.50)
-
-
-session.add(line1)
-session.commit()
-o2 = Order()
-o2.user = cookiemon
-session.add(o2)
-
-line1 = LineItem(order=o2, cookie=cc, quantity=2, extended_cost=1.50)
-line2 = LineItem(order=o2, cookie=dcc, quantity=9, extended_cost=6.75)
-
+cc = session.query(Cookie).filter(Cookie.cookie_name == 
+                                  "Change chocolate chip").one()
+line1 = LineItem(order=o1, cookie=cc, quantity=2, extended_cost=1.00)
 
 session.add(line1)
-session.add(line2)
 session.commit()
 
 
 # %%
-def ship_it(order_id):
-    order = session.query(Order).get(order_id)
-    for li in order.line_items:
-        li.cookie.quantity = li.cookie.quantity - li.quantity
-        session.add(li.cookie)
-    order.shipped = True
-    session.add(order)
-    session.commit()
-    print("shipped order ID: {}".format(order_id))
+order = session.query(Order).first()
+session.expunge(order)
+order.line_items.all()
 
 
 # %%
-ship_it(1)
-print(session.query(Cookie.cookie_name, Cookie.quantity).all())
-
-
-# %%
-ship_it(2)
-
-
-# %%
-print(session.query(Cookie.cookie_name, Cookie.quantity).all())
+cookies = session.query(Cookie).all()
 
 
 # %%
 session.rollback()
-print(session.query(Cookie.cookie_name, Cookie.quantity).all())
 
 
 # %%
 from sqlalchemy.exc import IntegrityError
-def ship_it(order_id):
-    order = session.query(Order).get(order_id)
-    for li in order.line_items:
-        li.cookie.quantity = li.cookie.quantity - li.quantity
-        session.add(li.cookie)
-    order.shipped = True
-    session.add(order)
-    try:
-        session.commit()
-        print("shipped order ID: {}".format(order_id))
-    except IntegrityError as error:
-        print('ERROR: {!s}'.format(error.orig))
-        session.rollback()
+try:
+    cookiemon = User('cookiemon', 'mon@cookie.com', '111-111-1111', 'password')
+    session.add(cookiemon)
+    o1 = Order()
+    o1.user = cookiemon
+    session.add(o1)
+
+    cc = session.query(Cookie).filter(Cookie.cookie_name == 
+                                  "Change chocolate chip").one()
+    line1 = LineItem(order=o1, cookie=cc, quantity=2, extended_cost=1.00)
+
+    session.add(line1)
+    session.commit()
+except IntegrityError as error:
+    print('ERROR: {}'.format(error.orig))
+    session.rollback()
 
 
 # %%
-ship_it(2)
-
-
-# %%
-
-
-
+session.query(Order).all()
