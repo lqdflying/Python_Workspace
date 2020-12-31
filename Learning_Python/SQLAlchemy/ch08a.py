@@ -4,7 +4,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Tuesday December 29th 2020 3:13:58 pm
+# Last Modified: Thursday December 31st 2020 5:02:50 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -56,10 +56,10 @@ class Cookie(Base):
         self.unit_cost = unit_cost
         
     def __repr__(self): 
-        return "Cookie(cookie_name='{self.cookie_name}', " \ 
-                       "cookie_recipe_url='{self.cookie_recipe_url}', " \ 
-                       "cookie_sku='{self.cookie_sku}', " \ 
-                       "quantity={self.quantity}, " \ 
+        return "Cookie(cookie_name='{self.cookie_name}', " \
+                       "cookie_recipe_url='{self.cookie_recipe_url}', " \
+                       "cookie_sku='{self.cookie_sku}', " \
+                       "quantity={self.quantity}, " \
                        "unit_cost={self.unit_cost})".format(self=self) 
     
     
@@ -81,9 +81,9 @@ class User(Base):
         self.password = password
         
     def __repr__(self): 
-        return "User(username='{self.username}', " \ 
-                     "email_address='{self.email_address}', " \ 
-                     "phone='{self.phone}', " \ 
+        return "User(username='{self.username}', " \
+                     "email_address='{self.email_address}', " \
+                     "phone='{self.phone}', " \
                      "password='{self.password}')".format(self=self) 
 
 class Order(Base):
@@ -95,7 +95,7 @@ class Order(Base):
     user =  relationship("User", backref=backref('orders', order_by=order_id))
     
     def __repr__(self): 
-        return "Order(user_id={self.user_id}, " \ 
+        return "Order(user_id={self.user_id}, " \
                       "shipped={self.shipped})".format(self=self)
 
 class LineItem(Base):
@@ -110,13 +110,13 @@ class LineItem(Base):
     cookie = relationship("Cookie", uselist=False)
 
     def __repr__(self): 
-        return "LineItem(order_id={self.order_id}, " \ 
-                         "cookie_id={self.cookie_id}, " \ 
-                         "quantity={self.quantity}, " \ 
+        return "LineItem(order_id={self.order_id}, " \
+                         "cookie_id={self.cookie_id}, " \
+                         "quantity={self.quantity}, " \
                          "extended_cost={self.extended_cost})".format( 
                     self=self) 
 
-Base.metadata.create_all(engine)
+# Base.metadata.create_all(engine)
 
 
 # %%
@@ -195,6 +195,7 @@ from sqlalchemy.orm.exc import MultipleResultsFound
 try:
     results = session.query(Cookie).one()
 except MultipleResultsFound as exc:
+    # print(dir(exc))
     print('We found too many cookies... is that even possible?')
 
 
@@ -203,12 +204,10 @@ session.query(Cookie).all()
 
 
 # %%
-cookiemon = User('cookiemon', 'mon@cookie.com', '111-111-1111', 'password')
-session.add(cookiemon)
-o1 = Order()
-o1.user = cookiemon
+# cookiemon = User('cookiemon', 'mon@cookie.com', '111-111-1111', 'password')
+cookiemon = session.query(User).filter(User.username == "cookiemon").first()
+o1 = Order(order_id=1,user=cookiemon)
 session.add(o1)
-
 cc = session.query(Cookie).filter(Cookie.cookie_name == 
                                   "Change chocolate chip").one()
 line1 = LineItem(order=o1, cookie=cc, quantity=2, extended_cost=1.00)
@@ -221,21 +220,6 @@ session.commit()
 order = session.query(Order).first()
 session.expunge(order)
 order.line_items.all()
-
-
-# %%
-cookiemon = User('cookiemon', 'mon@cookie.com', '111-111-1111', 'password')
-session.add(cookiemon)
-o1 = Order()
-o1.user = cookiemon
-session.add(o1)
-
-cc = session.query(Cookie).filter(Cookie.cookie_name == 
-                                  "Change chocolate chip").one()
-line1 = LineItem(order=o1, cookie=cc, quantity=2, extended_cost=1.00)
-
-session.add(line1)
-session.commit()
 
 
 # %%
@@ -262,11 +246,9 @@ try:
     session.add(line1)
     session.commit()
 except IntegrityError as error:
-    print('ERROR: {}'.format(error.orig.message))
+    print('ERROR: {}'.format(error.orig))
     session.rollback()
 
 
 # %%
 session.query(Order).all()
-
-

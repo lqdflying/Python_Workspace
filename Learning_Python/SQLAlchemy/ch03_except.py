@@ -4,7 +4,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Tuesday December 29th 2020 3:12:55 pm
+# Last Modified: Thursday December 31st 2020 2:26:19 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -20,6 +20,7 @@ from datetime import datetime
 
 from sqlalchemy import (MetaData, Table, Column, Integer, Numeric, String,
                         DateTime, ForeignKey, Boolean, create_engine, CheckConstraint)
+from sqlalchemy import select, insert                        
 metadata = MetaData()
 
 cookies = Table('cookies', metadata,
@@ -58,12 +59,11 @@ line_items = Table('line_items', metadata,
 
 engine = create_engine('mysql+pymysql://liuqd:liuquandong'  
                        '@localhost/liuqd', pool_recycle=3600)
-metadata.create_all(engine)
+# metadata.create_all(engine)
 connection = engine.connect()
 
 
 # %%
-from sqlalchemy import select, insert
 ins1 = insert(users).values(
     username="cookiemon",
     email_address="mon@cookie.com",
@@ -82,9 +82,19 @@ for result in results:
 
 
 # %%
-s = select([users.c.username])
+s = select([users.c.username,users.c.email_address])
 connection.execute(s).fetchall()
+# connection.execute(s).first()
+connection.execute(s).scalar()
 
+# %%
+ins3 = insert(users).values(
+    username="anddy",
+    email_address="anddy@cookie.com",
+    phone="444-444-4444",
+    password="password"
+)
+result = connection.execute(ins3)
 
 # %%
 ins2 = insert(users).values(
@@ -111,6 +121,16 @@ except IntegrityError as error:
     print("[error.params]: ",error.params)
     print("[error.orig]: ",error.orig)
 
+# %%
+from sqlalchemy.exc import IntegrityError
+s = select([users.c.username])
+
+try:
+    result = connection.execute(s).scalar()
+except IntegrityError as error:
+    print("[error.statement]: ",error.statement)
+    print("[error.params]: ",error.params)
+    print("[error.orig]: ",error.orig)
 
 # %%
 ins = cookies.insert()

@@ -4,7 +4,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Tuesday December 29th 2020 3:14:14 pm
+# Last Modified: Thursday December 31st 2020 3:15:44 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -39,7 +39,6 @@ Base = declarative_base()
 
 class Cookie(Base):
     __tablename__ = 'cookies'
-    __table_args__ = (CheckConstraint('quantity >= 0', name='quantity_positive'),)
 
     cookie_id = Column(Integer, primary_key=True)
     cookie_name = Column(String(50), index=True)
@@ -55,8 +54,12 @@ class Cookie(Base):
         self.quantity = quantity
         self.unit_cost = unit_cost
         
-    def __repr__(self):
-        return "Cookie(cookie_name='{self.cookie_name}', "                        "cookie_recipe_url='{self.cookie_recipe_url}', "                        "cookie_sku='{self.cookie_sku}', "                        "quantity={self.quantity}, "                        "unit_cost={self.unit_cost})".format(self=self)
+    def __repr__(self): 
+        return "Cookie(cookie_name='{self.cookie_name}', " \
+                       "cookie_recipe_url='{self.cookie_recipe_url}', " \
+                       "cookie_sku='{self.cookie_sku}', " \
+                       "quantity={self.quantity}, " \
+                       "unit_cost={self.unit_cost})".format(self=self) 
     
     
 class User(Base):
@@ -76,9 +79,11 @@ class User(Base):
         self.phone = phone
         self.password = password
         
-    def __repr__(self):
-        return "User(username='{self.username}', "                      "email_address='{self.email_address}', "                      "phone='{self.phone}', "                      "password='{self.password}')".format(self=self)
-    
+    def __repr__(self): 
+        return "User(username='{self.username}', " \
+                     "email_address='{self.email_address}', " \
+                     "phone='{self.phone}', " \
+                     "password='{self.password}')".format(self=self) 
 
 class Order(Base):
     __tablename__ = 'orders'
@@ -88,9 +93,9 @@ class Order(Base):
     
     user =  relationship("User", backref=backref('orders', order_by=order_id))
     
-    def __repr__(self):
-        return "Order(user_id={self.user_id}, "                       "shipped={self.shipped})".format(self=self)
-
+    def __repr__(self): 
+        return "Order(user_id={self.user_id}, " \
+                      "shipped={self.shipped})".format(self=self)
 
 class LineItem(Base):
     __tablename__ = 'line_items'
@@ -103,9 +108,12 @@ class LineItem(Base):
     order = relationship("Order", backref=backref('line_items', order_by=line_item_id))
     cookie = relationship("Cookie", uselist=False)
 
-    def __repr__(self):
-        return "LineItems(order_id={self.order_id}, "                           "cookie_id={self.cookie_id}, "                           "quantity={self.quantity}, "                           "extended_cost={self.extended_cost})".format(
-                    self=self)    
+    def __repr__(self): 
+        return "LineItem(order_id={self.order_id}, " \
+                         "cookie_id={self.cookie_id}, " \
+                         "quantity={self.quantity}, " \
+                         "extended_cost={self.extended_cost})".format( 
+                    self=self)
     
 Base.metadata.create_all(engine)
 

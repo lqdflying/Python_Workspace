@@ -4,7 +4,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Tuesday December 29th 2020 3:13:11 pm
+# Last Modified: Thursday December 31st 2020 11:57:02 am
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -43,7 +43,7 @@ users = Table('users', metadata,
 )
 
 orders = Table('orders', metadata,
-    Column('order_id', Integer()),
+    Column('order_id', Integer(),index=True),
     Column('user_id', ForeignKey('users.user_id')),
     Column('shipped', Boolean(), default=False)
 )
@@ -56,7 +56,8 @@ line_items = Table('line_items', metadata,
     Column('extended_cost', Numeric(12, 2))
 )
 
-engine = create_engine('sqlite:///:memory:')
+engine = create_engine('mysql+pymysql://liuqd:liuquandong'  
+                       '@localhost/liuqd', pool_recycle=3600)
 metadata.create_all(engine)
 connection = engine.connect()
 
