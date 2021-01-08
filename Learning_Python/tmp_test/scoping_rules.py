@@ -4,7 +4,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Monday December 28th 2020 10:47:49 am
+# Last Modified: Monday January 4th 2021 6:27:23 pm
 # 
 # Copyright (c) 2020 personal
 # <<licensetext>>
@@ -109,4 +109,23 @@ for i in range(5):
     pass
 
 print(i)
+
+# %%
+info = True
+baz = 10
+def foo(info):
+    naz = 3
+
+foo(info)
+
+if naz < baz:
+    print("1")
+
+# %%
+def foo():
+    print("a")
+
+def foo():
+    print("b")
+foo()
 
