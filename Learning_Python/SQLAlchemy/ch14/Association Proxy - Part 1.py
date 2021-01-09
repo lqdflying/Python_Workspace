@@ -4,7 +4,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Friday January 8th 2021 11:37:57 am
+# Last Modified: Saturday January 9th 2021 2:43:46 pm
 # 
 # Copyright (c) 2021 personal
 # <<licensetext>>
@@ -65,8 +65,11 @@ class Cookie(Base):
     ingredients = relationship("Ingredient", secondary=cookieingredients_table)
         
     def __repr__(self):
-        return "Cookie(cookie_name='{self.cookie_name}', "                        "cookie_recipe_url='{self.cookie_recipe_url}', "                        "cookie_sku='{self.cookie_sku}', "                        "quantity={self.quantity}, "                        "unit_cost={self.unit_cost})".format(self=self)
- 
+    return "Cookie(cookie_name='{self.cookie_name}', " \
+                   "cookie_recipe_url='{self.cookie_recipe_url}', " \
+                   "cookie_sku='{self.cookie_sku}', " \
+                   "quantity={self.quantity}, " \
+                   "unit_cost={self.unit_cost})".format(self=self)
 
 Base.metadata.create_all(engine)
 

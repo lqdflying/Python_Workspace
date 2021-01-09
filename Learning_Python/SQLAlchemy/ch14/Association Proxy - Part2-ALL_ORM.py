@@ -4,7 +4,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Saturday January 9th 2021 2:33:43 pm
+# Last Modified: Saturday January 9th 2021 5:25:35 pm
 # 
 # Copyright (c) 2021 personal
 # <<licensetext>>
@@ -21,8 +21,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-engine = create_engine('mysql+pymysql://liuqd:liuquandong'  
-                       '@localhost/liuqd', pool_recycle=3600, echo=True)
+engine = create_engine('mysql+pymysql://liuqd:liuquandong@localhost/liuqd', pool_recycle=3600, echo=False)
 
 Session = sessionmaker(bind=engine)
 
@@ -37,6 +36,12 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 
 Base = declarative_base()
+
+class cookieingredients_table(Base):
+    __tablename__ = 'cookieingredients'
+
+    cookie_id = Column(Integer(), ForeignKey("cookies.cookie_id"), primary_key=True)
+    ingredient_id = Column(Integer(), ForeignKey("ingredients.ingredient_id"), primary_key=True)
 
 
 class Ingredient(Base):
@@ -63,7 +68,7 @@ class Cookie(Base):
     quantity = Column(Integer())
     unit_cost = Column(Numeric(12, 2))
     
-    ingredients = relationship("Ingredient", secondary='cookieingredients')
+    ingredients = relationship("Ingredient", secondary='cookieingredients', backref="cookies")
     
     ingredient_names = association_proxy('ingredients', 'name')
 
@@ -74,12 +79,6 @@ class Cookie(Base):
                        "cookie_sku='{self.cookie_sku}', " \
                        "quantity={self.quantity}, " \
                        "unit_cost={self.unit_cost})".format(self=self)
-
-class cookieingredients_table(Base):
-    __tablename__ = 'cookieingredients'
-
-    cookie_id = Column(Integer(), ForeignKey("cookies.cookie_id"), primary_key=True)
-    ingredient_id = Column(Integer(), ForeignKey("ingredients.ingredient_id"), primary_key=True)
 
 Base.metadata.create_all(engine)
 
@@ -103,6 +102,8 @@ egg = Ingredient(name='Egg')
 cc = Ingredient(name='Chocolate Chips')
 
 cc_cookie.ingredients.extend([flour, sugar, egg, cc])
+cc.cookies.append(dcc)
+
 session.add(cc_cookie)
 session.add(dcc)
 session.flush()
@@ -120,6 +121,7 @@ cc_cookie.ingredient_names
 # %%
 cc_cookie.ingredient_names.append('Oil')
 session.flush()
+session.commit()
 
 
 # %%

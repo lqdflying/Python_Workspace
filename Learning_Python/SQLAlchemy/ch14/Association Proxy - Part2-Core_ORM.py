@@ -4,7 +4,7 @@
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Saturday January 9th 2021 2:33:21 pm
+# Last Modified: Saturday January 9th 2021 3:37:36 pm
 # 
 # Copyright (c) 2021 personal
 # <<licensetext>>
@@ -22,7 +22,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 engine = create_engine('mysql+pymysql://liuqd:liuquandong'  
-                       '@localhost/liuqd', pool_recycle=3600, echo=True)
+                       '@localhost/liuqd', pool_recycle=3600, echo=False)
 
 Session = sessionmaker(bind=engine)
 
@@ -71,7 +71,7 @@ class Cookie(Base):
     quantity = Column(Integer())
     unit_cost = Column(Numeric(12, 2))
     
-    ingredients = relationship("Ingredient", secondary=lambda: cookieingredients_table)
+    ingredients = relationship("Ingredient", secondary=lambda: cookieingredients_table) #很怪的写法,其实也可以写成secondary='cookieingredients'
     
     ingredient_names = association_proxy('ingredients', 'name')
 
