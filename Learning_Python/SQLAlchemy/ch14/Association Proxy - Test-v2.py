@@ -1,10 +1,10 @@
 ###
-# File: Association Proxy - Test.py
-# Created Date: 2021-01-08
+# File: Association Proxy - Test-v2.py
+# Created Date: 2021-01-09
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Saturday January 9th 2021 12:00:42 pm
+# Last Modified: Saturday January 9th 2021 12:40:59 pm
 # 
 # Copyright (c) 2021 personal
 # <<licensetext>>
@@ -13,6 +13,7 @@
 # Date      	 By	Comments
 # ----------	---	----------------------------------------------------------
 ###
+
 
 # To add a new cell, type '# %%'
 # To add a new markdown cell, type '# %% [markdown]'

@@ -1,3 +1,18 @@
+###
+# File: Association Proxy - Part2-Core_ORM.py
+# Created Date: 2021-01-09
+# Author: anddy.liu
+# Contact: <lqdflying@gmail.com>
+# 
+# Last Modified: Saturday January 9th 2021 2:33:21 pm
+# 
+# Copyright (c) 2021 personal
+# <<licensetext>>
+# -----
+# HISTORY:
+# Date      	 By	Comments
+# ----------	---	----------------------------------------------------------
+###
 
 
 # To add a new cell, type '# %%'
@@ -93,7 +108,7 @@ cc_cookie.ingredients.extend([flour, sugar, egg, cc])
 session.add(cc_cookie)
 session.add(dcc)
 session.flush()
-
+session.commit()
 
 
 # %%
