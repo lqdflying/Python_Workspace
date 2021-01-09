@@ -1,10 +1,10 @@
 ###
-# File: Association Proxy - Part 2.py
+# File: Association Proxy - Test.py
 # Created Date: 2021-01-08
 # Author: anddy.liu
 # Contact: <lqdflying@gmail.com>
 # 
-# Last Modified: Friday January 8th 2021 11:38:18 am
+# Last Modified: Saturday January 9th 2021 12:24:36 pm
 # 
 # Copyright (c) 2021 personal
 # <<licensetext>>
@@ -13,13 +13,15 @@
 # Date      	 By	Comments
 # ----------	---	----------------------------------------------------------
 ###
+
 # To add a new cell, type '# %%'
 # To add a new markdown cell, type '# %% [markdown]'
 # %%
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-engine = create_engine('sqlite:///:memory:')
+engine = create_engine('mysql+pymysql://liuqd:liuquandong'  
+                       '@localhost/liuqd', pool_recycle=3600, echo=False)
 
 Session = sessionmaker(bind=engine)
 
@@ -28,20 +30,12 @@ Session = sessionmaker(bind=engine)
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, Numeric, String, Table, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.associationproxy import association_proxy
 
 
 Base = declarative_base()
-
-
-cookieingredients_table = Table('cookieingredients', Base.metadata,
-    Column('cookie_id', Integer, ForeignKey("cookies.cookie_id"),
-           primary_key=True),
-    Column('ingredient_id', Integer, ForeignKey("ingredients.ingredient_id"),
-           primary_key=True)
-)
 
 
 class Ingredient(Base):
@@ -63,44 +57,52 @@ class Cookie(Base):
 
     cookie_id = Column(Integer, primary_key=True)
     cookie_name = Column(String(50), index=True)
-    cookie_recipe_url = Column(String(255))
-    cookie_sku = Column(String(55))
-    quantity = Column(Integer())
-    unit_cost = Column(Numeric(12, 2))
     
-    ingredients = relationship("Ingredient", secondary=lambda: cookieingredients_table)
+    # ingredients = relationship("Ingredient", secondary='cookieingredients_table')
     
     ingredient_names = association_proxy('ingredients', 'name')
-
         
     def __repr__(self):
-        return "Cookie(cookie_name='{self.cookie_name}', "                        "cookie_recipe_url='{self.cookie_recipe_url}', "                        "cookie_sku='{self.cookie_sku}', "                        "quantity={self.quantity}, "                        "unit_cost={self.unit_cost})".format(self=self)
- 
+        return "Cookie(cookie_name='{self.cookie_name}'".format(self=self)
+
+class cookieingredients_table(Base):
+    __tablename__ = 'cookieingredients'
+
+    cookie_id = Column(Integer(), ForeignKey("cookies.cookie_id"), primary_key=True)
+    ingredient_id = Column(Integer(), ForeignKey("ingredients.ingredient_id"), primary_key=True)
 
 Base.metadata.create_all(engine)
 
 
 # %%
 session = Session()
-cc_cookie = Cookie(cookie_name='chocolate chip', 
-                   cookie_recipe_url='http://some.aweso.me/cookie/recipe.html', 
-                   cookie_sku='CC01', 
-                   quantity=12, 
-                   unit_cost=0.50)
-dcc = Cookie(cookie_name='dark chocolate chip',
-             cookie_recipe_url='http://some.aweso.me/cookie/recipe_dark.html',
-             cookie_sku='CC02',
-             quantity=1,
-             unit_cost=0.75)
+cc_cookie = Cookie(cookie_name='chocolate chip')
+dcc = Cookie(cookie_name='dark chocolate chip')
 
 flour = Ingredient(name='Flour')
 sugar = Ingredient(name='Sugar')
 egg = Ingredient(name='Egg')
 cc = Ingredient(name='Chocolate Chips')
 
+
+session.add_all([cc_cookie, dcc])
+session.add_all([flour,sugar,egg,cc])
+
+
+session.add_all([
+    cookieingredients_table(cookie_id=session.query(Cookie.cookie_id).filter(Cookie.cookie_name=='chocolate chip'), \
+                            ingredient_id=session.query(Ingredient.ingredient_id).filter(Ingredient.name=='Flour')),
+    cookieingredients_table(cookie_id=session.query(Cookie.cookie_id).filter(Cookie.cookie_name=='chocolate chip'), \
+                            ingredient_id=session.query(Ingredient.ingredient_id).filter(Ingredient.name=='Egg')),
+    cookieingredients_table(cookie_id=session.query(Cookie.cookie_id).filter(Cookie.cookie_name=='dark chocolate chip'), \
+                            ingredient_id=session.query(Ingredient.ingredient_id).filter(Ingredient.name=='Egg'))
+])
+
+# %%
 cc_cookie.ingredients.extend([flour, sugar, egg, cc])
 session.add(cc_cookie)
 session.add(dcc)
+session.bulk_save_objects([flour, sugar, egg, cc])
 session.flush()
 
 

@@ -19,12 +19,12 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-engine = create_engine('sqlite:///:memory:')
+engine = create_engine('mysql+pymysql://liuqd:liuquandong'  
+                       '@localhost/liuqd', pool_recycle=3600)
 
 Session = sessionmaker(bind=engine)
 
 
-# %%
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, Numeric, String
@@ -51,9 +51,13 @@ class Cookie(Base):
     @hybrid_method
     def bake_more(self, min_quantity):
         return self.quantity < min_quantity
-        
-    def __repr__(self):
-        return "Cookie(cookie_name='{self.cookie_name}', "                        "cookie_recipe_url='{self.cookie_recipe_url}', "                        "cookie_sku='{self.cookie_sku}', "                        "quantity={self.quantity}, "                        "unit_cost={self.unit_cost})".format(self=self)
+ 
+    def __repr__(self): 
+        return "Cookie(cookie_name='{self.cookie_name}', " \
+            "cookie_recipe_url='{self.cookie_recipe_url}', " \
+            "cookie_sku='{self.cookie_sku}', " \
+            "quantity={self.quantity}, " \
+            "unit_cost={self.unit_cost})".format(self=self)
  
 
 Base.metadata.create_all(engine)
@@ -88,7 +92,7 @@ session.add(cc_cookie)
 session.add(dcc)
 session.add(mol)
 session.flush()
-
+session.commit()
 
 # %%
 dcc.inventory_value
