@@ -57,6 +57,11 @@ def baidu():
 def hi():
     return redirect(url_for('hello'))
 
+@app.route('/url_test')
+def url_test():
+    a = request.url
+    return a
+
 
 # use int URL converter
 @app.route('/goback/<int:year>')
