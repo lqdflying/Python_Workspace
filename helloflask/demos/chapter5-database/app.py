@@ -6,31 +6,33 @@
     :license: MIT, see LICENSE for more details.
 """
 import os
-import sys
 
 import click
 from flask import Flask
 from flask import redirect, url_for, abort, render_template, flash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm.attributes import flag_modified
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, TextAreaField
 from wtforms.validators import DataRequired
 
-# SQLite URI compatible
-WIN = sys.platform.startswith('win')
-if WIN:
-    prefix = 'sqlite:///'
-else:
-    prefix = 'sqlite:////'
+## db_config
+db_userpass = 'mysql+pymysql://liuqd:liuquandong@'
+db_basedir  = 'localhost'
+db_name   = '/liuqd'
+db_socket   = '?unix_socket=/var/run/mysqld/mysqld.sock'
+db_dbname   = db_name + db_socket
 
 app = Flask(__name__)
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
 
+app.config['ENV'] = 'development'
+app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'secret string')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', prefix + os.path.join(app.root_path, 'data.db'))
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = db_userpass + db_basedir + db_dbname
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(app)
 
@@ -56,12 +58,13 @@ def initdb(drop):
 # Forms
 class NewNoteForm(FlaskForm):
     body = TextAreaField('Body', validators=[DataRequired()])
-    submit = SubmitField('Save')
+    submit = SubmitField('保存')
+
 
 
 class EditNoteForm(FlaskForm):
     body = TextAreaField('Body', validators=[DataRequired()])
-    submit = SubmitField('Update')
+    submit = SubmitField('更新')
 
 
 class DeleteNoteForm(FlaskForm):
@@ -93,7 +96,7 @@ def new_note():
         note = Note(body=body)
         db.session.add(note)
         db.session.commit()
-        flash('Your note is saved.')
+        flash('笔记保存了.')
         return redirect(url_for('index'))
     return render_template('new_note.html', form=form)
 
@@ -276,13 +279,20 @@ class Draft(db.Model):
     edit_time = db.Column(db.Integer, default=0)
 
 
-@db.event.listens_for(Draft.body, 'set')
-def increment_edit_time(target, value, oldvalue, initiator):
+@db.event.listens_for(Draft.body, 'modified')
+def increment_edit_time(target, initiator):
     if target.edit_time is not None:
         target.edit_time += 1
+
+# @db.event.listens_for(Draft.body, 'set')
+# def increment_edit_time(target, value, oldvalue, initiator):
+#     if target.edit_time is not None:
+#         target.edit_time += 1
 
 # same with:
 # @db.event.listens_for(Draft.body, 'set', named=True)
 # def increment_edit_time(**kwargs):
 #     if kwargs['target'].edit_time is not None:
 #         kwargs['target'].edit_time += 1
+if __name__ == "__main__":
+    app.run()

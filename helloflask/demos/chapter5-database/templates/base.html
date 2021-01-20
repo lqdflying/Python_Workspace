@@ -3,12 +3,12 @@
 <head>
     {% block head %}
     <meta charset="utf-8">
-    <title>{% block title %}Database - HelloFlask{% endblock %}</title>
+    <title>{% block title %}Database - HelloFlask{% endblock title %}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     {% block styles %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css' ) }}">
-    {% endblock %}
-    {% endblock %}
+    {% endblock styles %}
+    {% endblock head %}
 </head>
 <body>
     <nav>
@@ -23,7 +23,7 @@
             {{ message }}
         </div>
         {% endfor %}
-        {% block content %}{% endblock %}
+        {% block content %}{% endblock content %}
     </main>
 <footer>
     {% block footer %}
@@ -31,8 +31,8 @@
                 <a href="https://github.com/greyli/helloflask" title="Fork me on GitHub">GitHub</a> /
                 <a href="http://helloflask.com" title="A HelloFlask project">HelloFlask</a>
             </small>
-    {% endblock %}
+    {% endblock footer %}
 </footer>
-{% block scripts %}{% endblock %}
+{% block scripts %}{% endblock scripts %}
 </body>
 </html>
